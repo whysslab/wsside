@@ -1,0 +1,117 @@
+{
+  "name": "oide",
+  "productName": "OIDE",
+  "version": "1.0.0",
+  "main": "main.js",
+  "description": "现代化的在线集成开发环境 - 支持 C++ 代码编辑、编译和运行",
+  "author": "OIDE Team",
+  "homepage": "https://github.com/your-username/oide",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "dist": "electron-builder --publish=never",
+    "pack": "electron-builder --dir"
+  },
+  "devDependencies": {
+    "electron": "^28.2.3",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.oide.app",
+    "productName": "OIDE",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "gcc-installer.js",
+      "index.html",
+      "auth.js",
+      "electron-auth.js",
+      "ide/**/*",
+      "login/**/*",
+      "register/**/*",
+      "developer/**/*",
+      "assets/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend",
+        "to": "backend",
+        "filter": [
+          "**/*",
+          "!__pycache__",
+          "!*.pyc",
+          "!flask_session",
+          "!.git"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "requestedExecutionLevel": "asInvoker",
+      "signAndEditExecutable": false,
+      "signDlls": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "category": "Development"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "OIDE"
+    }
+  },
+  "dependencies": {
+    "pnpm": "^10.13.1"
+  }
+}

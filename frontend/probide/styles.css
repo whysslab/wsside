@@ -1,0 +1,10 @@
+.cpp-number {color: rgba(62, 207, 142, 1)}
+.cpp-string {color: rgba(245, 166, 35, 1)}
+.cpp-keyword {color: rgba(137, 180, 250, 1)}
+.cpp-operator {color: rgba(233, 79, 79, 1)}
+.cpp-type {color: rgba(62, 207, 142, 1)}
+.cpp-comment {color: rgba(168, 178, 191, 1); font-style: italic}
+.cpp-preprocessor {color: rgba(111, 154, 223, 1)}
+.__paraflow-fa-fas {font-family: "Font Awesome 6 Free"; display: inline-block; line-height: 1; font-weight: 900; font-style: normal}
+.line-number {text-align: right; width: 2rem; padding-right: 0.75rem; color: rgba(168, 178, 191, 1)}
+.cpp-function {color: rgba(166, 200, 255, 1)}

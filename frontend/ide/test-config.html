@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>配置测试</title>
+    <style>
+        body {
+            background: #181c20;
+            color: #e0e0e0;
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-container {
+            background: #24282f;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #3c424d;
+        }
+        .test-title {
+            color: #89b4fa;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .config-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: #1a1d21;
+            border-radius: 4px;
+            border-left: 3px solid #3ecf8e;
+        }
+        .config-label {
+            color: #89b4fa;
+            font-weight: 500;
+        }
+        .config-value {
+            color: #e0e0e0;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status.success {
+            background: #3ecf8e;
+            color: #181d21;
+        }
+        .status.error {
+            background: #ff6b6b;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #89b4fa;">IDE 配置测试</h1>
+    
+    <div class="test-container">
+        <div class="test-title">配置加载状态</div>
+        <div id="configStatus"></div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">环境检测</div>
+        <div id="environmentInfo"></div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">API 配置</div>
+        <div id="apiConfig"></div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">连接测试</div>
+        <div id="connectionTest">
+            <button onclick="testConnection()" style="
+                background: #89b4fa;
+                color: #181d21;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 16px;
+                font-size: 14px;
+                cursor: pointer;
+                margin-bottom: 16px;
+            ">测试 AI Agent 连接</button>
+            <div id="testResult"></div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        function updateConfigStatus() {
+            const statusDiv = document.getElementById('configStatus');
+            
+            if (window.IDE_CONFIG) {
+                statusDiv.innerHTML = '<span class="status success">✅ 配置文件加载成功</span>';
+            } else {
+                statusDiv.innerHTML = '<span class="status error">❌ 配置文件加载失败</span>';
+                return;
+            }
+            
+            // 环境信息
+            const envDiv = document.getElementById('environmentInfo');
+            const isDev = window.IDE_CONFIG.isDevelopment();
+            const hostname = window.location.hostname;
+            const port = window.location.port;
+            
+            envDiv.innerHTML = `
+                <div class="config-item">
+                    <div class="config-label">当前环境:</div>
+                    <div class="config-value">${isDev ? '开发环境' : '生产环境'}</div>
+                </div>
+                <div class="config-item">
+                    <div class="config-label">主机名:</div>
+                    <div class="config-value">${hostname}</div>
+                </div>
+                <div class="config-item">
+                    <div class="config-label">端口:</div>
+                    <div class="config-value">${port || '默认'}</div>
+                </div>
+                <div class="config-item">
+                    <div class="config-label">完整地址:</div>
+                    <div class="config-value">${window.location.href}</div>
+                </div>
+            `;
+            
+            // API 配置
+            const apiDiv = document.getElementById('apiConfig');
+            const apiConfig = window.IDE_CONFIG.getApiConfig();
+            
+            apiDiv.innerHTML = `
+                <div class="config-item">
+                    <div class="config-label">AI Agent API:</div>
+                    <div class="config-value">${apiConfig.AI_AGENT}</div>
+                </div>
+                <div class="config-item">
+                    <div class="config-label">后端 API:</div>
+                    <div class="config-value">${apiConfig.BACKEND}</div>
+                </div>
+            `;
+        }
+        
+        async function testConnection() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '<div style="color: #f0c674;">正在测试连接...</div>';
+            
+            if (!window.IDE_CONFIG) {
+                resultDiv.innerHTML = '<div style="color: #ff6b6b;">❌ 配置未加载</div>';
+                return;
+            }
+            
+            const apiConfig = window.IDE_CONFIG.getApiConfig();
+            const healthUrl = `${apiConfig.AI_AGENT}/health`;
+            
+            try {
+                const response = await fetch(healthUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div style="color: #3ecf8e;">✅ 连接成功</div>
+                        <div class="config-item">
+                            <div class="config-label">状态码:</div>
+                            <div class="config-value">${response.status}</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">响应:</div>
+                            <div class="config-value">${JSON.stringify(data, null, 2)}</div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="color: #ff6b6b;">❌ 连接失败</div>
+                        <div class="config-item">
+                            <div class="config-label">状态码:</div>
+                            <div class="config-value">${response.status}</div>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-label">错误:</div>
+                            <div class="config-value">${await response.text()}</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="color: #ff6b6b;">❌ 网络错误</div>
+                    <div class="config-item">
+                        <div class="config-label">错误信息:</div>
+                        <div class="config-value">${error.message}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // 页面加载时更新状态
+        document.addEventListener('DOMContentLoaded', updateConfigStatus);
+    </script>
+</body>
+</html>

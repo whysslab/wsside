@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>WSS IDE - Normal Style.</title>
+  <link rel="stylesheet" href="https://static.paraflowcontent.com/public/css/font-awesome/font-awesome.672.css">
+  <link rel="stylesheet" href="./styles.css">
+  <!-- 认证脚本已移除，IDE现在可以无需登录直接使用 -->
+  <style>
+    body { background: #181c20; color: #e0e0e0; font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; margin: 0; padding: 0; }
+    .header { background: #24282f; border-bottom: 1px solid #3c424d; display: flex; align-items: center; height: 64px; padding: 0 24px; }
+    .header .logo { display: flex; align-items: center; margin-right: 32px; }
+    .header .logo i { color: #f0f4f8; font-size: 24px; margin-right: 8px; }
+    .header .logo span { font-size: 16px; font-weight: 500; }
+    .header .toolbar { display: flex; align-items: center; margin-right: 32px; }
+    .header .toolbar button { background: #3c424d; color: #e0e0e0; border: none; border-radius: 4px; margin-right: 16px; padding: 6px 12px; font-size: 12px; display: flex; align-items: center; cursor: pointer; transition: background 0.2s; }
+    .header .toolbar button:last-child { margin-right: 0; }
+    .header .toolbar button:hover { background: #505664; }
+    .header .toolbar i { margin-right: 8px; }
+    
+    /* GCC 状态样式 */
+    .gcc-status { 
+      display: flex; 
+      align-items: center; 
+      padding: 6px 12px; 
+      border-radius: 4px; 
+      font-size: 12px; 
+      font-weight: 500; 
+      margin-left: 16px; 
+      transition: all 0.2s; 
+    }
+    .gcc-status i { margin-right: 6px; }
+    .gcc-status.checking { 
+      background: #3c424d; 
+      color: #a8b2bf; 
+    }
+    .gcc-status.installed { 
+      background: #2d5a3d; 
+      color: #3ecf8e; 
+    }
+    .gcc-status.not-installed { 
+      background: #5a2d2d; 
+      color: #ff6b6b; 
+    }
+    .gcc-status.not-installed:hover { 
+      background: #6d3535; 
+      transform: translateY(-1px); 
+    }
+    .header .run-btn { background: #89b4fa; color: #181d21; font-weight: 500; font-size: 14px; padding: 6px 18px; border-radius: 4px; margin-right: 24px; display: flex; align-items: center; border: none; cursor: pointer; transition: background 0.2s; }
+    .header .run-btn:hover { background: #a6c8ff; }
+    .header .right { margin-left: auto; display: flex; align-items: center; }
+    .header .right button { background: transparent; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-right: 8px; cursor: pointer; }
+    .header .right button:last-child { margin-right: 0; }
+    .header .right i { color: #a8b2bf; font-size: 20px; }
+    .main { display: flex; width: 100vw; min-height: calc(100vh - 64px); height: calc(100vh - 64px); box-sizing: border-box; }
+    .editor-panel { flex: 1 1 0; display: flex; flex-direction: column; background: #1a1d21; border-right: 1px solid #3c424d; min-width: 0; }
+    .editor-title { background: #24282f; border-bottom: 1px solid #3c424d; height: 40px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; }
+    #editor { flex: 1 1 0; min-height: 0; min-width: 0; width: 100%; height: 100%; }
+    .side-panel { width: 480px; min-width: 320px; max-width: 60vw; background: #1a1d21; display: flex; flex-direction: column; position: relative; transition: width 0.3s ease, transform 0.3s ease; }
+    .side-panel.hidden { transform: translateX(100%); }
+
+    .sidebar-resizer { position: absolute; left: 0; top: 0; width: 4px; height: 100%; cursor: ew-resize; background: transparent; z-index: 10; }
+    .sidebar-resizer:hover { background: #89b4fa; }
+    .sidebar-resizer.resizing { background: #89b4fa; }
+
+    .console-tabs { background: #24282f; border-bottom: 1px solid #3c424d; height: 40px; display: flex; align-items: center; padding: 0 16px; position: relative; }
+    .console-tabs button { background: none; border: none; color: #89b4fa; font-size: 14px; font-weight: 500; padding: 8px 16px; border-bottom: 2px solid #89b4fa; cursor: pointer; }
+    .console-tabs .sidebar-controls { position: absolute; right: 8px; display: flex; gap: 4px; }
+    .console-tabs .sidebar-controls button { background: transparent; border: none; color: #a8b2bf; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 2px; }
+    .console-tabs .sidebar-controls button:hover { background: #3c424d; color: #e0e0e0; }
+    .console-content { flex: 1 1 0; background: #24282f; overflow-y: auto; padding: 16px; min-width: 0; }
+    .console-section { margin-bottom: 24px; }
+    .console-section-title { color: #89b4fa; font-size: 12px; margin-bottom: 8px; }
+    .console-section-content { background: #3c424d; color: #e0e0e0; border-radius: 4px; padding: 12px; font-size: 13px; }
+    .console-section-content.success { color: #3ecf8e; }
+    .console-section-content.error { color: #ff6b6b; }
+    .console-section-content .output-highlight { color: #3ecf8e; }
+    .hidden { display: none !important; }
+    
+    /* AI Agent 样式 */
+    .ai-message { margin-bottom: 16px; padding: 12px; background: #24282f; border-radius: 8px; }
+    .ai-message.user { border-left: 3px solid #89b4fa; }
+    .ai-message.assistant { border-left: 3px solid #3ecf8e; }
+    .ai-message.system { border-left: 3px solid #ff6b6b; }
+    .ai-message-role { color: #89b4fa; font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+    .ai-message-content { color: #e0e0e0; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+    .ai-input-container { display: flex; gap: 8px; }
+    .ai-input { flex: 1; background: #3c424d; color: #e0e0e0; border: 1px solid #505664; border-radius: 4px; padding: 8px; font-size: 14px; resize: vertical; min-height: 36px; max-height: 120px; font-family: inherit; }
+    .ai-send-btn { background: #89b4fa; color: #181d21; border: none; border-radius: 4px; padding: 8px 16px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+    .ai-send-btn:hover { background: #a6c8ff; }
+    .ai-send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .ai-toolbar { display: flex; gap: 8px; margin-bottom: 8px; }
+    .ai-toolbar button { background: #3c424d; color: #e0e0e0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; }
+    .ai-toolbar button:hover { background: #505664; }
+    
+    /* 思考过程样式 */
+    .thinking-container { margin: 8px 0; border: 1px solid #3c424d; border-radius: 6px; background: #1a1d21; }
+    .thinking-header { padding: 8px 12px; background: #2a2d35; border-radius: 6px 6px 0 0; cursor: pointer; display: flex; align-items: center; font-size: 12px; color: #a8b2bf; user-select: none; transition: background 0.2s; }
+    .thinking-header:hover { background: #3a3d45; }
+    .thinking-content { padding: 12px; font-size: 13px; color: #c9d1d9; background: #1a1d21; border-radius: 0 0 6px 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.4; font-family: 'Consolas', 'Monaco', monospace; }
+    .thinking-icon { margin-right: 6px; transition: transform 0.2s; display: inline-block; }
+    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    .modal { background: #23272e; color: #e0e0e0; border-radius: 8px; padding: 32px 40px; min-width: 320px; max-width: 90vw; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+    .modal-content { font-size: 14px; margin-bottom: 24px; }
+    .modal-close { background: #89b4fa; color: #181d21; border: none; border-radius: 4px; padding: 6px 18px; font-size: 14px; font-weight: 500; cursor: pointer; float: right; }
+    input[type="file"] { display: none; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <button onclick="goHome()" style="background: none; border: none; color: #e0e0e0; cursor: pointer; margin-right: 16px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#3c424d'" onmouseout="this.style.background='none'">
+        <i class="fas fa-home"></i>
+      </button>
+      <i class="fas fa-code"></i><span>WSS IDE (AI only)</span>
+    </div>
+    <div class="toolbar">
+      <button id="newBtn"><i class="fas fa-plus"></i>新建</button>
+      <button id="openBtn"><i class="fas fa-folder-open"></i>打开<input type="file" id="openFileInput" accept=".cpp,.txt,.h,.hpp,.c" /></button>
+      <button id="saveBtn"><i class="fas fa-save"></i>保存</button>
+      <button onclick="window.location.href='../probide/index.html'" title="切换到刷题模式"><i class="fas fa-puzzle-piece"></i>刷题</button>
+      <div id="gccStatus" class="gcc-status checking" title="GCC 编译器状态">
+        <i class="fas fa-spinner fa-spin"></i> 检查中...
+      </div>
+    </div>
+    <button class="run-btn" id="runBtn"><i class="fas fa-play"></i>运行</button>
+    <div class="right">
+      <button id="toggleSidebarBtn" title="切换侧栏 (Ctrl+Shift+C)"><i class="fas fa-columns"></i></button>
+      <!-- button id="settingsBtn"><i class="fas fa-gear"></i></button -->
+      <button id="helpBtn"><i class="fas fa-question-circle"></i></button>
+    </div>
+  </header>
+  <div class="main">
+    <div class="editor-panel">
+      <div class="editor-title" id="editorTitle">main.cpp</div>
+      <div id="editor"></div>
+    </div>
+    <div class="side-panel" id="sidePanel">
+      <div class="sidebar-resizer" id="sidebarResizer"></div>
+      <div class="console-tabs">
+        <button id="consoleTab">控制台</button>
+        <div class="sidebar-controls">
+          <button id="closeSidebarBtn" title="关闭侧栏"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+      <div class="console-content" id="consoleContent">
+        <div class="console-section">
+          <div class="console-section-title">编译信息:</div>
+          <div class="console-section-content" id="compileInfo"></div>
+        </div>
+        <div class="console-section">
+          <div class="console-section-title">程序输出:</div>
+          <div class="console-section-content" id="programOutput"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modalBackdrop" class="modal-backdrop hidden">
+    <div class="modal">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-content" id="modalContent"></div>
+      <div style="text-align:right;">
+        <button class="modal-close" id="modalConfirmBtn" style="margin-right:12px; display:none;">确认</button>
+        <button class="modal-close" id="modalCloseBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    function goHome() {
+      window.location.href = '../index.html';
+    }
+    
+    // 侧栏状态管理
+    let sidebarState = {
+      visible: true,
+      width: 480
+    };
+    
+    // 从本地存储恢复侧栏状态
+    function loadSidebarState() {
+      const saved = localStorage.getItem('ide-sidebar-state');
+      if (saved) {
+        try {
+          sidebarState = { ...sidebarState, ...JSON.parse(saved) };
+        } catch (e) {
+          console.warn('Failed to load sidebar state:', e);
+        }
+      }
+    }
+    
+    // 保存侧栏状态到本地存储
+    function saveSidebarState() {
+      localStorage.setItem('ide-sidebar-state', JSON.stringify(sidebarState));
+    }
+    
+    // 应用侧栏状态
+    function applySidebarState() {
+      const sidePanel = document.getElementById('sidePanel');
+      
+      if (!sidebarState.visible) {
+        sidePanel.classList.add('hidden');
+      } else {
+        sidePanel.classList.remove('hidden');
+        sidePanel.style.width = sidebarState.width + 'px';
+      }
+    }
+    
+    // 切换侧栏显示/隐藏
+    function toggleSidebar() {
+      sidebarState.visible = !sidebarState.visible;
+      applySidebarState();
+      saveSidebarState();
+    }
+    
+
+    
+    // 关闭侧栏
+    function closeSidebar() {
+      sidebarState.visible = false;
+      applySidebarState();
+      saveSidebarState();
+    }
+    
+    // 侧栏拖拽调整宽度
+    function initSidebarResize() {
+      const resizer = document.getElementById('sidebarResizer');
+      const sidePanel = document.getElementById('sidePanel');
+      let isResizing = false;
+      let startX = 0;
+      let startWidth = 0;
+      
+      resizer.addEventListener('mousedown', (e) => {
+        if (!sidebarState.visible) return;
+        
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = parseInt(window.getComputedStyle(sidePanel).width, 10);
+        resizer.classList.add('resizing');
+        document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+        
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        
+        const deltaX = startX - e.clientX;
+        const newWidth = startWidth + deltaX;
+        const minWidth = 320;
+        const maxWidth = window.innerWidth * 0.6;
+        
+        if (newWidth >= minWidth && newWidth <= maxWidth) {
+          sidePanel.style.width = newWidth + 'px';
+          sidebarState.width = newWidth;
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        if (isResizing) {
+          isResizing = false;
+          resizer.classList.remove('resizing');
+          document.body.style.cursor = '';
+          document.body.style.userSelect = '';
+          saveSidebarState();
+        }
+      });
+    }
+    
+    // 键盘快捷键
+    function initKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Ctrl+Shift+C 或 F12 切换侧栏
+        if ((e.ctrlKey && e.shiftKey && e.key === 'C') || e.key === 'F12') {
+          e.preventDefault();
+          toggleSidebar();
+        }
+      });
+      
+
+    }
+    
+    // 响应式调整
+    function initResponsiveResize() {
+      window.addEventListener('resize', () => {
+        const sidePanel = document.getElementById('sidePanel');
+        const maxWidth = window.innerWidth * 0.6;
+        
+        if (sidebarState.width > maxWidth) {
+          sidebarState.width = maxWidth;
+          sidePanel.style.width = maxWidth + 'px';
+          saveSidebarState();
+        }
+      });
+    }
+    
+    // IDE初始化 - 无需认证版本
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('IDE: DOM loaded, initializing without authentication...');
+      
+      // 初始化侧栏功能
+      loadSidebarState();
+      applySidebarState();
+      initSidebarResize();
+      initKeyboardShortcuts();
+      initResponsiveResize();
+      
+      // 绑定按钮事件
+      document.getElementById('toggleSidebarBtn').addEventListener('click', toggleSidebar);
+      document.getElementById('closeSidebarBtn').addEventListener('click', closeSidebar);
+      
+      // 添加一个简单的状态指示
+      const statusDiv = document.createElement('div');
+      statusDiv.style.cssText = 'margin-left: auto; margin-right: 16px; font-size: 14px; color: #a8b2bf; display: flex; align-items: center;';
+      statusDiv.innerHTML = '<span>🚀 IDE 就绪</span>';
+      
+      const headerRight = document.querySelector('.header .right');
+      headerRight.insertBefore(statusDiv, headerRight.firstChild);
+      
+      console.log('IDE: Initialization complete - ready to use without authentication');
+    });
+  </script>
+  <script src="config.js"></script>
+  <script src="renderer.js"></script>
+  <script src="ai-agent.js"></script>
+</body>
+</html> 

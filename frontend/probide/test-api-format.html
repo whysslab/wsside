@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>ProBIDE API 格式测试</title>
+  <style>
+    body { 
+      background: #181c20; 
+      color: #e0e0e0; 
+      font-family: system-ui, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+    }
+    .test-section {
+      background: #24282f;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #3c424d;
+    }
+    .test-title {
+      color: #89b4fa;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    button {
+      background: #89b4fa;
+      color: #181d21;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    button:hover { background: #a6c8ff; }
+    .code-block {
+      background: #1a1d21;
+      padding: 12px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      margin: 8px 0;
+      white-space: pre-wrap;
+    }
+    .result {
+      background: #1a1d21;
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      min-height: 100px;
+      white-space: pre-wrap;
+    }
+    .status-success { color: #3ecf8e; }
+    .status-error { color: #ff6b6b; }
+    .status-info { color: #89b4fa; }
+  </style>
+</head>
+<body>
+  <h1>🔧 ProBIDE API 格式测试</h1>
+  
+  <div class="test-section">
+    <div class="test-title">📋 API 格式更新</div>
+    <p>已将 ProBIDE 的题目转换 API 请求格式更新为与 IDE ai-agent 一致：</p>
+    
+    <h4>更新前：</h4>
+    <div class="code-block">
+// 旧格式
+fetch('/api/ai-agent', {
+  method: 'POST',
+  body: JSON.stringify({
+    message: "...",
+    context: 'problem_conversion'
+  })
+});
+    </div>
+    
+    <h4>更新后：</h4>
+    <div class="code-block">
+// 新格式（参考 IDE ai-agent）
+const apiBase = window.IDE_CONFIG ? 
+  window.IDE_CONFIG.getApiConfig().AI_AGENT : 
+  'https://api.ide.whyss.tech/api/ai';
+
+// 1. 检查健康状态
+await fetch(`${apiBase}/health`, {
+  method: 'GET',
+  mode: 'cors'
+});
+
+// 2. 发送聊天请求
+await fetch(`${apiBase}/chat`, {
+  method: 'POST',
+  body: JSON.stringify({
+    message: "...",
+    session_id: sessionId
+  }),
+  mode: 'cors'
+});
+
+// 3. 处理流式响应
+const reader = response.body.getReader();
+// ... 流式处理逻辑
+    </div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🧪 测试功能</div>
+    <p>测试题目内容（可以修改）：</p>
+    <textarea id="testContent" style="width: 100%; height: 100px; background: #3c424d; color: #e0e0e0; border: 1px solid #505664; border-radius: 4px; padding: 8px; font-family: inherit;">
+题目：两数之和
+给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值 target 的那两个整数，并返回它们的数组下标。
+
+输入：nums = [2,7,11,15], target = 9
+输出：[0,1]
+解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1]。
+    </textarea>
+    
+    <div style="margin-top: 12px;">
+      <button onclick="testConversion()">测试 AI 转换</button>
+      <button onclick="testHealthCheck()">测试健康检查</button>
+      <button onclick="clearResult()">清空结果</button>
+    </div>
+    
+    <div id="result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🔍 调试信息</div>
+    <p>如果测试失败，请检查：</p>
+    <ul>
+      <li>AI 服务是否正常运行</li>
+      <li>网络连接是否正常</li>
+      <li>CORS 设置是否正确</li>
+      <li>API 端点是否可访问</li>
+    </ul>
+    
+    <button onclick="window.open('./index.html', '_blank')">打开 ProBIDE 测试</button>
+  </div>
+
+  <script>
+    // 复制 ProBIDE 中的相关函数进行测试
+    function isMarkdownFormat(content) {
+      const markdownIndicators = [
+        /^#{1,6}\s+/m,           // 标题
+        /\*\*.*?\*\*/,           // 粗体
+        /\*.*?\*/,               // 斜体
+        /`.*?`/,                 // 行内代码
+        /```[\s\S]*?```/,        // 代码块
+        /^\* /m,                 // 无序列表
+        /^\d+\. /m,              // 有序列表
+        /^\> /m                  // 引用
+      ];
+      
+      return markdownIndicators.some(pattern => pattern.test(content));
+    }
+
+    async function convertProblemToMarkdown(content) {
+      try {
+        // 检查是否已经是 Markdown 格式
+        if (isMarkdownFormat(content)) {
+          return content;
+        }
+        
+        // 获取 API 基础路径（参考 IDE ai-agent 格式）
+        const apiBase = window.IDE_CONFIG ? window.IDE_CONFIG.getApiConfig().AI_AGENT : 'https://api.ide.whyss.tech/api/ai';
+        const sessionId = 'probide_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        
+        // 检查服务是否可用
+        const healthResponse = await fetch(`${apiBase}/health`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors'
+        });
+        
+        if (!healthResponse.ok) {
+          throw new Error('AI 服务暂时不可用，请稍后重试');
+        }
+        
+        // 调用 AI API 转换为 Markdown（参考 IDE ai-agent 格式）
+        const response = await fetch(`${apiBase}/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `请将以下题目内容转换为标准的 Markdown 格式，只返回 Markdown 内容，不要包含任何解释或额外文字：\n\n${content}`,
+            session_id: sessionId
+          }),
+          mode: 'cors'
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`服务器错误 (${response.status}): ${errorText}`);
+        }
+        
+        // 处理流式响应（参考 IDE ai-agent 的处理方式）
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let fullContent = '';
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop(); // 保留不完整的行
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.content) {
+                  fullContent += data.content;
+                } else if (data.done) {
+                  return fullContent || content;
+                } else if (data.error) {
+                  throw new Error(data.error);
+                }
+              } catch (e) {
+                console.warn('解析流数据失败:', e);
+              }
+            }
+          }
+        }
+        
+        return fullContent || content;
+        
+      } catch (error) {
+        console.error('AI 转换失败:', error);
+        // 降级处理：返回原始内容
+        return content;
+      }
+    }
+
+    async function testConversion() {
+      const content = document.getElementById('testContent').value;
+      const result = document.getElementById('result');
+      
+      result.innerHTML = '<span class="status-info">正在测试 AI 转换...</span>';
+      
+      try {
+        const converted = await convertProblemToMarkdown(content);
+        result.innerHTML = `<span class="status-success">✅ 转换成功</span>\n\n原始内容：\n${content}\n\n转换结果：\n${converted}`;
+      } catch (error) {
+        result.innerHTML = `<span class="status-error">❌ 转换失败</span>\n\n错误信息：\n${error.message}`;
+      }
+    }
+
+    async function testHealthCheck() {
+      const result = document.getElementById('result');
+      
+      result.innerHTML = '<span class="status-info">正在检查 AI 服务健康状态...</span>';
+      
+      try {
+        const apiBase = window.IDE_CONFIG ? window.IDE_CONFIG.getApiConfig().AI_AGENT : 'https://api.ide.whyss.tech/api/ai';
+        
+        const response = await fetch(`${apiBase}/health`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors'
+        });
+        
+        if (response.ok) {
+          const data = await response.text();
+          result.innerHTML = `<span class="status-success">✅ AI 服务正常</span>\n\nAPI 基础路径：${apiBase}\n响应：${data}`;
+        } else {
+          result.innerHTML = `<span class="status-error">❌ AI 服务异常</span>\n\n状态码：${response.status}\n状态文本：${response.statusText}`;
+        }
+      } catch (error) {
+        result.innerHTML = `<span class="status-error">❌ 连接失败</span>\n\n错误信息：\n${error.message}`;
+      }
+    }
+
+    function clearResult() {
+      document.getElementById('result').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

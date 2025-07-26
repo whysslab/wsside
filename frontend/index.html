@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OIDE - 在线集成开发环境</title>
+  <link rel="stylesheet" href="https://static.paraflowcontent.com/public/css/font-awesome/font-awesome.672.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 800px;
+      padding: 40px 20px;
+    }
+    
+    .logo {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    
+    .title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .feature {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: #ffd700;
+    }
+    
+    .feature-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    
+    .feature-desc {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      line-height: 1.5;
+    }
+    
+    .cta-section {
+      margin-top: 50px;
+    }
+    
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+      color: white;
+      text-decoration: none;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      margin: 10px;
+    }
+    
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+    }
+    
+    .cta-button i {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .secondary-button {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .secondary-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .footer {
+      margin-top: 60px;
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .title {
+        font-size: 2.2rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+      
+      .features {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .cta-button {
+        display: block;
+        margin: 10px auto;
+        width: fit-content;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <i class="fas fa-code"></i>
+    </div>
+    
+    <h1 class="title">WhySoSerious IDE</h1>
+    <p class="subtitle">
+      一个专为信息竞赛生量身定制的刷题 IDE。<br>
+      让你的 OI 学习变得更简单。
+    </p>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">
+          <i class="fas fa-play-circle"></i>
+        </div>
+        <h3 class="feature-title">一键运行</h3>
+        <p class="feature-desc">集成 GCC 编译器，支持 C++ 代码的快速编译和执行</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">
+          <i class="fas fa-puzzle-piece"></i>
+        </div>
+        <h3 class="feature-title">刷题模式</h3>
+        <p class="feature-desc">专为算法题目设计的IDE，自动获取题目信息，AI助手辅助解题</p>
+      </div>
+    </div>
+    
+    <div class="feature">
+      <div class="feature-icon">
+        <i class="fas fa-puzzle-piece"></i>
+      </div>
+      <h3 class="feature-title">And More!</h3>
+      <p class="feature-desc">更多功能正在努力开发，后续可以通过关注 ide.whyss.tech 获取后续进度。</p>
+    </div>
+  </div>
+  
+    <div class="cta-section">
+      <a href="./ide/index.html" class="cta-button">
+        <i class="fas fa-rocket"></i>
+        开始编程
+      </a>
+      
+      <a href="./probide/index.html" class="cta-button">
+        <i class="fas fa-puzzle-piece"></i>
+        刷题IDE
+      </a>
+    <div class="footer">
+      <p>&copy; 2025 Why So Serious Lab. for(;;) Create(anything);</p>
+    </div>
+  </div>
+
+  <script>
+    
+    // 添加一些交互效果
+    document.addEventListener('DOMContentLoaded', function() {
+      // 为特性卡片添加动画
+      const features = document.querySelectorAll('.feature');
+      features.forEach((feature, index) => {
+        feature.style.opacity = '0';
+        feature.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+          feature.style.transition = 'all 0.6s ease';
+          feature.style.opacity = '1';
+          feature.style.transform = 'translateY(0)';
+        }, index * 200);
+      });
+    });
+  </script>
+</body>
+</html>

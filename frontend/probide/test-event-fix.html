@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>ProBIDE 事件处理修复测试</title>
+  <style>
+    body { 
+      background: #181c20; 
+      color: #e0e0e0; 
+      font-family: system-ui, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+    }
+    .test-section {
+      background: #24282f;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #3c424d;
+    }
+    .test-title {
+      color: #89b4fa;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    button {
+      background: #89b4fa;
+      color: #181d21;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    button:hover { background: #a6c8ff; }
+    .code-block {
+      background: #1a1d21;
+      padding: 12px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      margin: 8px 0;
+      white-space: pre-wrap;
+    }
+    .result {
+      background: #1a1d21;
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      min-height: 50px;
+    }
+    .status-success { color: #3ecf8e; }
+    .status-error { color: #ff6b6b; }
+    .status-info { color: #89b4fa; }
+  </style>
+</head>
+<body>
+  <h1>🔧 ProBIDE 事件处理修复测试</h1>
+  
+  <div class="test-section">
+    <div class="test-title">🐛 问题描述</div>
+    <p><strong>问题：</strong>在抛给 AI 整理的时候，题面内容变成了 <code>[object PointerEvent]</code></p>
+    
+    <h4>原因分析：</h4>
+    <p>在事件绑定时，<code>processProblem</code> 函数被直接作为事件处理器传递：</p>
+    <div class="code-block">
+// 问题代码
+document.getElementById('processProblemBtn').addEventListener('click', processProblem);
+
+// 当用户点击按钮时，浏览器会将事件对象作为第一个参数传递
+// processProblem(event) <- event 是 PointerEvent 对象
+// 而 processProblem 函数期望的是字符串内容
+    </div>
+    
+    <h4>修复方案：</h4>
+    <div class="code-block">
+// 修复后的代码
+document.getElementById('processProblemBtn').addEventListener('click', () => {
+  processProblem(); // 不传递任何参数，让函数内部从 textarea 获取内容
+});
+    </div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🧪 测试事件处理</div>
+    <p>模拟 ProBIDE 的事件处理逻辑：</p>
+    
+    <textarea id="testTextarea" placeholder="输入测试内容..." style="width: 100%; height: 80px; background: #3c424d; color: #e0e0e0; border: 1px solid #505664; border-radius: 4px; padding: 8px; font-family: inherit;">
+测试题目：两数之和
+给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值 target 的那两个整数，并返回它们的数组下标。
+    </textarea>
+    
+    <div style="margin-top: 12px;">
+      <button id="testCorrectBtn">正确的事件处理</button>
+      <button id="testWrongBtn">错误的事件处理（演示问题）</button>
+      <button onclick="clearResult()">清空结果</button>
+    </div>
+    
+    <div id="result" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">✅ 验证修复</div>
+    <p>打开 ProBIDE 页面测试：</p>
+    <ol>
+      <li>在左侧栏输入题目内容</li>
+      <li>点击"处理题目"按钮</li>
+      <li>检查是否正常处理，而不是显示 <code>[object PointerEvent]</code></li>
+    </ol>
+    
+    <button onclick="window.open('./index.html', '_blank')">打开 ProBIDE 测试</button>
+  </div>
+
+  <script>
+    // 模拟 processProblem 函数
+    function mockProcessProblem(content = null) {
+      const textarea = document.getElementById('testTextarea');
+      const problemText = content || textarea.value.trim();
+      
+      const result = document.getElementById('result');
+      
+      if (typeof problemText === 'object') {
+        result.innerHTML = `<span class="status-error">❌ 错误：接收到对象而不是字符串</span>\n\n类型：${typeof problemText}\n内容：${problemText.toString()}`;
+      } else if (typeof problemText === 'string') {
+        result.innerHTML = `<span class="status-success">✅ 正确：接收到字符串内容</span>\n\n类型：${typeof problemText}\n长度：${problemText.length}\n内容预览：${problemText.substring(0, 100)}...`;
+      } else {
+        result.innerHTML = `<span class="status-error">❌ 未知类型：${typeof problemText}</span>\n\n内容：${problemText}`;
+      }
+    }
+
+    // 正确的事件处理方式
+    document.getElementById('testCorrectBtn').addEventListener('click', () => {
+      mockProcessProblem(); // 不传递参数
+    });
+
+    // 错误的事件处理方式（演示问题）
+    document.getElementById('testWrongBtn').addEventListener('click', mockProcessProblem);
+
+    function clearResult() {
+      document.getElementById('result').innerHTML = '';
+    }
+
+    // 页面加载时显示说明
+    window.addEventListener('load', () => {
+      const result = document.getElementById('result');
+      result.innerHTML = '<span class="status-info">💡 点击上面的按钮测试不同的事件处理方式</span>';
+    });
+  </script>
+</body>
+</html>

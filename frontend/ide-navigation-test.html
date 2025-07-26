@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>IDE 导航测试</title>
+  <link rel="stylesheet" href="https://static.paraflowcontent.com/public/css/font-awesome/font-awesome.672.css">
+  <style>
+    body { background: #181c20; color: #e0e0e0; font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
+    .test-container { max-width: 900px; margin: 0 auto; }
+    .nav-section { background: #24282f; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .nav-section h3 { color: #89b4fa; margin-top: 0; }
+    .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+    .nav-card { background: #1a1d21; border: 1px solid #3c424d; border-radius: 8px; padding: 20px; text-align: center; transition: transform 0.2s; }
+    .nav-card:hover { transform: translateY(-2px); border-color: #89b4fa; }
+    .nav-icon { font-size: 48px; color: #89b4fa; margin-bottom: 16px; }
+    .nav-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .nav-desc { color: #a8b2bf; font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
+    .nav-button { display: inline-block; background: #89b4fa; color: #181d21; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 500; transition: background 0.2s; }
+    .nav-button:hover { background: #a6c8ff; }
+    .feature-list { list-style: none; padding: 0; margin: 16px 0; }
+    .feature-list li { padding: 4px 0; color: #e0e0e0; font-size: 13px; }
+    .feature-list li:before { content: "✓ "; color: #3ecf8e; font-weight: bold; }
+    .back-button { background: #3c424d; color: #e0e0e0; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 14px; }
+    .back-button:hover { background: #505664; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🚀 OIDE 导航测试</h1>
+    
+    <div class="nav-section">
+      <h3>选择你的开发模式</h3>
+      <div class="nav-grid">
+        <div class="nav-card">
+          <div class="nav-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <div class="nav-title">普通 IDE</div>
+          <div class="nav-desc">适合日常编程开发，提供完整的代码编辑和编译环境</div>
+          <ul class="feature-list">
+            <li>Monaco 编辑器</li>
+            <li>语法高亮和自动补全</li>
+            <li>一键编译运行</li>
+            <li>文件管理功能</li>
+            <li>AI 助手支持</li>
+          </ul>
+          <a href="./ide/index.html" class="nav-button">
+            <i class="fas fa-rocket"></i> 开始编程
+          </a>
+        </div>
+        
+        <div class="nav-card">
+          <div class="nav-icon">
+            <i class="fas fa-puzzle-piece"></i>
+          </div>
+          <div class="nav-title">刷题 IDE</div>
+          <div class="nav-desc">专为算法题目设计，支持题目获取和AI辅助解题</div>
+          <ul class="feature-list">
+            <li>双侧栏布局</li>
+            <li>自动获取题目信息</li>
+            <li>AI 题目分析</li>
+            <li>上下文感知助手</li>
+            <li>Markdown 题目渲染</li>
+          </ul>
+          <a href="./probide/index.html" class="nav-button">
+            <i class="fas fa-puzzle-piece"></i> 开始刷题
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="nav-section">
+      <h3>🔄 模式切换</h3>
+      <p>两种模式可以随时切换：</p>
+      <ul style="color: #a8b2bf; line-height: 1.6;">
+        <li><strong>在普通IDE中：</strong>点击工具栏的"刷题"按钮切换到刷题模式</li>
+        <li><strong>在刷题IDE中：</strong>点击工具栏的"普通IDE"按钮切换到普通模式</li>
+        <li><strong>主页入口：</strong>主页提供两种模式的直接入口</li>
+      </ul>
+    </div>
+    
+    <div class="nav-section">
+      <h3>⌨️ 快捷键对比</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+          <h4 style="color: #89b4fa;">普通 IDE</h4>
+          <ul style="color: #a8b2bf; font-size: 14px;">
+            <li><code>Ctrl+Shift+C</code> - 切换侧栏</li>
+            <li><code>F12</code> - 切换侧栏</li>
+            <li><code>Ctrl+S</code> - 保存文件</li>
+            <li><code>F5</code> - 运行代码</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="color: #89b4fa;">刷题 IDE</h4>
+          <ul style="color: #a8b2bf; font-size: 14px;">
+            <li><code>Ctrl+Shift+Q</code> - 切换题目栏</li>
+            <li><code>Ctrl+Shift+C</code> - 切换AI助手</li>
+            <li><code>F12</code> - 切换AI助手</li>
+            <li><code>Enter</code> - 提交题目URL</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="index.html" class="back-button">
+        <i class="fas fa-home"></i> 返回主页
+      </a>
+    </div>
+  </div>
+</body>
+</html>

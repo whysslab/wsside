@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>IDE 侧栏功能测试</title>
+  <link rel="stylesheet" href="https://static.paraflowcontent.com/public/css/font-awesome/font-awesome.672.css">
+  <style>
+    body { background: #181c20; color: #e0e0e0; font-family: system-ui, sans-serif; margin: 0; padding: 20px; }
+    .test-container { max-width: 900px; margin: 0 auto; }
+    .feature-list { background: #24282f; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+    .feature-list h3 { color: #89b4fa; margin-top: 0; }
+    .feature-list ul { margin: 0; padding-left: 20px; }
+    .feature-list li { margin-bottom: 8px; line-height: 1.5; }
+    .shortcut { background: #3c424d; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+    .demo-link { display: inline-block; background: #89b4fa; color: #181d21; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-top: 10px; margin-right: 10px; }
+    .demo-link:hover { background: #a6c8ff; }
+    .status-indicator { background: #3ecf8e; color: #181d21; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .feature-demo { background: #1a1d21; border: 1px solid #3c424d; border-radius: 8px; padding: 16px; margin: 16px 0; }
+    .feature-demo h4 { color: #f0f4f8; margin-top: 0; margin-bottom: 12px; }
+    .demo-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+    .demo-btn { background: #3c424d; color: #e0e0e0; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .demo-btn:hover { background: #505664; }
+    .demo-btn.active { background: #89b4fa; color: #181d21; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🎛️ IDE 侧栏功能完整指南</h1>
+    
+    <div style="text-align: center; margin-bottom: 20px;">
+      <span class="status-indicator">✅ 功能已完成</span>
+    </div>
+
+    <div class="feature-list">
+      <h3>🚀 核心功能</h3>
+      <ul>
+        <li><strong>智能显示控制：</strong>支持显示和隐藏两种状态</li>
+        <li><strong>拖拽调整宽度：</strong>鼠标悬停在侧栏左边缘，拖拽调整宽度（320px - 60%窗口宽度）</li>
+        <li><strong>状态持久化：</strong>自动保存侧栏宽度、显示状态到本地存储，重启后恢复</li>
+        <li><strong>响应式设计：</strong>窗口大小变化时自动调整侧栏最大宽度限制</li>
+        <li><strong>平滑动画：</strong>所有状态切换都有 0.3s 的平滑过渡效果</li>
+      </ul>
+    </div>
+
+    <div class="feature-list">
+      <h3>⌨️ 快捷键操作</h3>
+      <ul>
+        <li><span class="shortcut">Ctrl + Shift + C</span> - 切换侧栏显示/隐藏</li>
+        <li><span class="shortcut">F12</span> - 切换侧栏显示/隐藏（开发者工具风格）</li>
+      </ul>
+    </div>
+
+    <div class="feature-list">
+      <h3>🎯 交互方式</h3>
+      <ul>
+        <li><strong>工具栏按钮：</strong>头部工具栏新增 <i class="fas fa-columns" style="color: #89b4fa;"></i> 侧栏切换按钮</li>
+        <li><strong>标题栏控制：</strong>关闭 <i class="fas fa-times" style="color: #89b4fa;"></i> 按钮</li>
+        <li><strong>拖拽调整：</strong>侧栏左边缘 4px 宽度的调整手柄，悬停时高亮显示</li>
+      </ul>
+    </div>
+
+    <div class="feature-list">
+      <h3>📐 尺寸和限制</h3>
+      <ul>
+        <li><strong>默认宽度：</strong>480px</li>
+        <li><strong>最小宽度：</strong>320px（保证内容可读性）</li>
+        <li><strong>最大宽度：</strong>窗口宽度的 60%（保证编辑器可用空间）</li>
+        <li><strong>调整手柄：</strong>4px 宽度，悬停时显示蓝色高亮</li>
+      </ul>
+    </div>
+
+    <div class="feature-demo">
+      <h4>🧪 功能演示控制</h4>
+      <p>以下按钮可以帮助你测试各种侧栏功能：</p>
+      <div class="demo-controls">
+        <button class="demo-btn" onclick="testToggleSidebar()">切换显示/隐藏</button>
+        <button class="demo-btn" onclick="testResetWidth()">重置宽度</button>
+        <button class="demo-btn" onclick="testClearStorage()">清除存储</button>
+      </div>
+    </div>
+
+    <div class="feature-list">
+      <h3>🔧 技术实现</h3>
+      <ul>
+        <li><strong>状态管理：</strong>JavaScript 对象管理 visible、width 两个状态</li>
+        <li><strong>本地存储：</strong>使用 localStorage 持久化侧栏配置</li>
+        <li><strong>CSS 过渡：</strong>transform 和 width 属性的平滑动画</li>
+        <li><strong>事件处理：</strong>鼠标拖拽、键盘快捷键、按钮点击的统一处理</li>
+        <li><strong>响应式：</strong>窗口 resize 事件监听和动态调整</li>
+      </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="index.html" class="demo-link">🚀 打开 IDE 测试功能</a>
+      <a href="../index.html" class="demo-link">🏠 返回主页</a>
+    </div>
+  </div>
+
+  <script>
+    // 测试功能（需要在 IDE 页面中才能正常工作）
+    function testToggleSidebar() {
+      if (window.parent && window.parent.toggleSidebar) {
+        window.parent.toggleSidebar();
+      } else {
+        alert('请在 IDE 页面中测试此功能');
+      }
+    }
+    
+
+    function testResetWidth() {
+      if (window.parent && window.parent.sidebarState) {
+        window.parent.sidebarState.width = 480;
+        window.parent.applySidebarState();
+        window.parent.saveSidebarState();
+      } else {
+        alert('请在 IDE 页面中测试此功能');
+      }
+    }
+    
+    function testClearStorage() {
+      localStorage.removeItem('ide-sidebar-state');
+      alert('侧栏状态已清除，刷新页面查看效果');
+    }
+  </script>
+</body>
+</html>

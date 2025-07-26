@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>ProBIDE 功能测试</title>
+  <style>
+    body { 
+      background: #181c20; 
+      color: #e0e0e0; 
+      font-family: system-ui, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+    }
+    .test-section {
+      background: #24282f;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #3c424d;
+    }
+    .test-title {
+      color: #89b4fa;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    .test-item {
+      margin-bottom: 12px;
+      padding: 8px;
+      background: #1a1d21;
+      border-radius: 4px;
+    }
+    .status-pass { color: #3ecf8e; }
+    .status-fail { color: #ff6b6b; }
+    .status-pending { color: #f0c674; }
+    button {
+      background: #89b4fa;
+      color: #181d21;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    button:hover { background: #a6c8ff; }
+    .code-block {
+      background: #1a1d21;
+      padding: 12px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 ProBIDE 功能测试</h1>
+  
+  <div class="test-section">
+    <div class="test-title">📋 实现的功能</div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> 左侧栏 - 题目输入和显示
+    </div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> 双侧栏控制 - 独立的打开/关闭功能
+    </div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> 拖拽调整 - 左右侧栏都支持宽度调整
+    </div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> AI 转换服务 - 纯文本转 Markdown
+    </div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> Markdown 渲染 - 题目内容格式化显示
+    </div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> AI 上下文集成 - 自动附带题目信息
+    </div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> 状态持久化 - 侧栏状态自动保存
+    </div>
+    <div class="test-item">
+      <span class="status-pass">✅</span> 键盘快捷键 - Ctrl+Shift+Q/C 控制侧栏
+    </div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🚀 测试步骤</div>
+    <ol style="line-height: 1.6;">
+      <li><strong>基础功能测试：</strong>
+        <ul>
+          <li>打开 ProBIDE 页面</li>
+          <li>检查左侧栏是否显示题目输入界面</li>
+          <li>测试左右侧栏的打开/关闭按钮</li>
+          <li>测试拖拽调整侧栏宽度</li>
+        </ul>
+      </li>
+      <li><strong>题目处理测试：</strong>
+        <ul>
+          <li>在左侧栏输入题目内容（纯文本或 Markdown）</li>
+          <li>点击"处理题目"按钮</li>
+          <li>检查是否显示处理中状态</li>
+          <li>验证 AI 转换和 Markdown 渲染效果</li>
+        </ul>
+      </li>
+      <li><strong>AI 上下文测试：</strong>
+        <ul>
+          <li>处理题目后，在右侧 AI 助手中提问</li>
+          <li>检查 AI 是否能获得题目上下文</li>
+          <li>验证 AI 回答是否与题目相关</li>
+        </ul>
+      </li>
+    </ol>
+    
+    <button onclick="window.open('./index.html', '_blank')">打开 ProBIDE 测试</button>
+    <button onclick="window.open('../ide/index.html', '_blank')">对比普通 IDE</button>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">💡 测试用例</div>
+    <h4>示例题目内容（可复制粘贴）：</h4>
+    <div class="code-block">
+# 两数之和
+
+## 题目描述
+给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值 target 的那两个整数，并返回它们的数组下标。
+
+## 输入输出说明
+- **输入：** 整数数组 nums 和整数 target
+- **输出：** 两个整数的数组下标
+
+## 示例
+### 示例 1
+**输入：** nums = [2,7,11,15], target = 9
+**输出：** [0,1]
+**解释：** 因为 nums[0] + nums[1] == 9，所以返回 [0, 1]
+
+### 示例 2
+**输入：** nums = [3,2,4], target = 6
+**输出：** [1,2]
+
+## 约束条件
+- 2 <= nums.length <= 10^4
+- -10^9 <= nums[i] <= 10^9
+- -10^9 <= target <= 10^9
+- 只会存在一个有效答案
+    </div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🔧 最新功能</div>
+    <p><strong>✅ LaTeX 渲染支持：</strong>支持 <code>$...$</code>、<code>\\(...\\)</code>、<code>$$...$$</code>、<code>\\[...\\]</code> 格式的数学公式</p>
+    <p><strong>✅ Think 过程过滤：</strong>自动过滤掉 deepseek-r1 的 <code>&lt;think&gt;...&lt;/think&gt;</code> 思考过程</p>
+    <p><strong>✅ 事件处理修复：</strong>修复了题面内容变成 <code>[object PointerEvent]</code> 的问题</p>
+    <p><strong>✅ API 格式更新：</strong>ProBIDE 的题目转换 API 请求格式已更新为与 IDE ai-agent 一致</p>
+    
+    <button onclick="window.open('./test-latex-think.html', '_blank')">测试 LaTeX 和 Think 过滤</button>
+    <button onclick="window.open('./test-event-fix.html', '_blank')">测试事件处理修复</button>
+    
+    <h4>新的 API 格式特点：</h4>
+    <ul>
+      <li>使用相同的 API 基础路径和配置</li>
+      <li>支持健康检查端点 <code>/health</code></li>
+      <li>使用 <code>/chat</code> 端点进行对话</li>
+      <li>支持流式响应处理</li>
+      <li>包含 session_id 用于会话管理</li>
+    </ul>
+    
+    <button onclick="window.open('./test-api-format.html', '_blank')">测试 API 格式</button>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🔧 调试信息</div>
+    <p>如果遇到问题，请在 ProBIDE 页面按 F12 打开开发者工具，查看控制台输出。</p>
+    
+    <h4>常见问题：</h4>
+    <ul>
+      <li><strong>左侧栏不显示：</strong> 检查控制台是否有 JavaScript 错误</li>
+      <li><strong>AI 转换失败：</strong> 确认 AI 服务是否正常运行，可使用 API 测试页面检查</li>
+      <li><strong>上下文不工作：</strong> 检查 AI 助手是否正确初始化</li>
+      <li><strong>网络错误：</strong> 检查 CORS 设置和网络连接</li>
+    </ul>
+    
+    <h4>手动测试命令：</h4>
+    <div class="code-block">
+// 在 ProBIDE 页面控制台中运行
+console.log('左侧栏:', document.getElementById('leftPanel'));
+console.log('题目内容:', document.getElementById('problemContent'));
+console.log('侧栏状态:', window.sidebarState);
+
+// 手动显示题目输入界面
+showProblemInput();
+
+// 测试题目处理
+window.currentProblemText = "测试题目内容";
+processProblem();
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>ProBIDE LaTeX 和 Think 过滤测试</title>
+  <!-- MathJax 配置和加载 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    body { 
+      background: #181c20; 
+      color: #e0e0e0; 
+      font-family: system-ui, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+    }
+    .test-section {
+      background: #24282f;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #3c424d;
+    }
+    .test-title {
+      color: #89b4fa;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    button {
+      background: #89b4fa;
+      color: #181d21;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    button:hover { background: #a6c8ff; }
+    .code-block {
+      background: #1a1d21;
+      padding: 12px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      margin: 8px 0;
+      white-space: pre-wrap;
+    }
+    .result {
+      background: #1a1d21;
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      min-height: 100px;
+      border: 1px solid #3c424d;
+    }
+    .problem-display {
+      color: #e0e0e0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .problem-display h1, .problem-display h2, .problem-display h3 {
+      color: #89b4fa;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    .problem-display h1:first-child, .problem-display h2:first-child, .problem-display h3:first-child {
+      margin-top: 0;
+    }
+    .problem-display code {
+      background: #3c424d;
+      color: #f0f4f8;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .problem-display pre {
+      background: #3c424d;
+      color: #f0f4f8;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .status-success { color: #3ecf8e; }
+    .status-error { color: #ff6b6b; }
+    .status-info { color: #89b4fa; }
+  </style>
+</head>
+<body>
+  <h1>🧮 ProBIDE LaTeX 和 Think 过滤测试</h1>
+  
+  <div class="test-section">
+    <div class="test-title">📋 新增功能</div>
+    <p><strong>✅ LaTeX 渲染支持：</strong>支持 <code>$...$</code>、<code>\\(...\\)</code>、<code>$$...$$</code>、<code>\\[...\\]</code> 格式的数学公式</p>
+    <p><strong>✅ Think 过程过滤：</strong>自动过滤掉 deepseek-r1 的 <code>&lt;think&gt;...&lt;/think&gt;</code> 思考过程</p>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🧪 LaTeX 渲染测试</div>
+    <p>测试各种 LaTeX 格式：</p>
+    
+    <h4>测试内容：</h4>
+    <div class="code-block">
+# 数学题目示例
+
+## 二次方程
+求解二次方程 $ax^2 + bx + c = 0$ 的根。
+
+解：使用求根公式 $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
+
+## 矩阵运算
+计算矩阵乘法：
+$$\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} ax + by \\\\ cx + dy \\end{pmatrix}$$
+
+## 求和公式
+等差数列求和：\\(S_n = \\frac{n(a_1 + a_n)}{2}\\)
+
+## 积分
+定积分：\\[\\int_a^b f(x)dx = F(b) - F(a)\\]
+    </div>
+    
+    <button onclick="testLatexRendering()">测试 LaTeX 渲染</button>
+    <div id="latexResult" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🤔 Think 过程过滤测试</div>
+    <p>测试过滤 deepseek-r1 的思考过程：</p>
+    
+    <h4>测试内容（包含 think 标签）：</h4>
+    <div class="code-block">
+<think>
+这是一个关于二次方程的问题。我需要分析一下：
+1. 首先确定方程的形式
+2. 然后应用求根公式
+3. 考虑判别式的情况
+</think>
+
+# 二次方程求解
+
+给定二次方程 $ax^2 + bx + c = 0$，其中 $a \\neq 0$。
+
+<think>
+用户应该看不到这个思考过程，因为我们要过滤掉这些内容。
+</think>
+
+## 求根公式
+根据求根公式：$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
+
+## 判别式
+- 当 $\\Delta = b^2 - 4ac > 0$ 时，方程有两个不同的实根
+- 当 $\\Delta = 0$ 时，方程有一个重根
+- 当 $\\Delta < 0$ 时，方程无实根
+
+<think>
+这个思考过程也应该被过滤掉。
+</think>
+    </div>
+    
+    <button onclick="testThinkFiltering()">测试 Think 过滤</button>
+    <div id="thinkResult" class="result"></div>
+  </div>
+
+  <div class="test-section">
+    <div class="test-title">🔄 综合测试</div>
+    <p>同时测试 LaTeX 渲染和 Think 过滤：</p>
+    
+    <button onclick="testCombined()">综合测试</button>
+    <button onclick="window.open('./index.html', '_blank')">打开 ProBIDE 测试</button>
+    <div id="combinedResult" class="result"></div>
+  </div>
+
+  <script>
+    // 复制 ProBIDE 中的相关函数
+    function filterThinkingProcess(content) {
+      return content.replace(/<think>[\s\S]*?<\/think>/gi, '');
+    }
+
+    function renderMarkdown(markdown) {
+      const filteredMarkdown = filterThinkingProcess(markdown);
+      
+      const rendered = filteredMarkdown
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/```([^```]+)```/g, '<pre><code>$1</code></pre>')
+        .replace(/^\* (.*$)/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/\n/g, '<br>');
+      
+      return rendered;
+    }
+
+    function renderMathJax(element) {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([element]).catch((err) => {
+          console.warn('MathJax 渲染失败:', err);
+        });
+      }
+    }
+
+    function testLatexRendering() {
+      const content = `# 数学题目示例
+
+## 二次方程
+求解二次方程 $ax^2 + bx + c = 0$ 的根。
+
+解：使用求根公式 $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
+
+## 矩阵运算
+计算矩阵乘法：
+$$\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} ax + by \\\\ cx + dy \\end{pmatrix}$$
+
+## 求和公式
+等差数列求和：\\(S_n = \\frac{n(a_1 + a_n)}{2}\\)
+
+## 积分
+定积分：\\[\\int_a^b f(x)dx = F(b) - F(a)\\]`;
+
+      const rendered = renderMarkdown(content);
+      const resultDiv = document.getElementById('latexResult');
+      resultDiv.innerHTML = `<div class="problem-display tex2jax_process">${rendered}</div>`;
+      
+      setTimeout(() => {
+        renderMathJax(resultDiv);
+      }, 100);
+    }
+
+    function testThinkFiltering() {
+      const content = `<think>
+这是一个关于二次方程的问题。我需要分析一下：
+1. 首先确定方程的形式
+2. 然后应用求根公式
+3. 考虑判别式的情况
+</think>
+
+# 二次方程求解
+
+给定二次方程 $ax^2 + bx + c = 0$，其中 $a \\neq 0$。
+
+<think>
+用户应该看不到这个思考过程，因为我们要过滤掉这些内容。
+</think>
+
+## 求根公式
+根据求根公式：$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$
+
+## 判别式
+- 当 $\\Delta = b^2 - 4ac > 0$ 时，方程有两个不同的实根
+- 当 $\\Delta = 0$ 时，方程有一个重根
+- 当 $\\Delta < 0$ 时，方程无实根
+
+<think>
+这个思考过程也应该被过滤掉。
+</think>`;
+
+      const filtered = filterThinkingProcess(content);
+      const rendered = renderMarkdown(filtered);
+      const resultDiv = document.getElementById('thinkResult');
+      
+      resultDiv.innerHTML = `
+        <div class="status-info">过滤前内容长度: ${content.length} 字符</div>
+        <div class="status-info">过滤后内容长度: ${filtered.length} 字符</div>
+        <div class="status-success">✅ Think 标签已过滤</div>
+        <hr style="border-color: #3c424d; margin: 12px 0;">
+        <div class="problem-display tex2jax_process">${rendered}</div>
+      `;
+      
+      setTimeout(() => {
+        renderMathJax(resultDiv);
+      }, 100);
+    }
+
+    function testCombined() {
+      const content = `<think>
+这是一个复杂的数学问题，需要用到多种数学符号和公式。
+</think>
+
+# 综合数学测试
+
+<think>
+我需要展示各种数学公式的渲染效果。
+</think>
+
+## 基础代数
+一元二次方程：$ax^2 + bx + c = 0$ 的解为 $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$
+
+## 微积分
+函数 $f(x) = x^2$ 的导数：$f'(x) = 2x$
+
+积分：$\\int x^2 dx = \\frac{x^3}{3} + C$
+
+<think>
+这些公式应该能正确渲染，而这个思考过程应该被过滤掉。
+</think>
+
+## 线性代数
+矩阵乘法：
+$$A \\cdot B = \\begin{pmatrix} a_{11} & a_{12} \\\\ a_{21} & a_{22} \\end{pmatrix} \\begin{pmatrix} b_{11} & b_{12} \\\\ b_{21} & b_{22} \\end{pmatrix}$$
+
+## 概率论
+正态分布概率密度函数：
+$$f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{(x-\\mu)^2}{2\\sigma^2}}$$`;
+
+      const filtered = filterThinkingProcess(content);
+      const rendered = renderMarkdown(filtered);
+      const resultDiv = document.getElementById('combinedResult');
+      
+      const thinkCount = (content.match(/<think>/gi) || []).length;
+      
+      resultDiv.innerHTML = `
+        <div class="status-success">✅ 过滤了 ${thinkCount} 个 think 标签</div>
+        <div class="status-success">✅ LaTeX 公式已渲染</div>
+        <hr style="border-color: #3c424d; margin: 12px 0;">
+        <div class="problem-display tex2jax_process">${rendered}</div>
+      `;
+      
+      setTimeout(() => {
+        renderMathJax(resultDiv);
+      }, 100);
+    }
+
+    // 页面加载时显示说明
+    window.addEventListener('load', () => {
+      console.log('LaTeX 和 Think 过滤测试页面已加载');
+    });
+  </script>
+</body>
+</html>
