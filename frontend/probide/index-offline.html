@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;">
+  <title>WSS IDE - Problem Style (Offline)</title>
+  <style>
+    /* 内联 Font Awesome 图标样式 */
+    .icon-home::before { content: "🏠"; }
+    .icon-plus::before { content: "➕"; }
+    .icon-folder::before { content: "📁"; }
+    .icon-save::before { content: "💾"; }
+    .icon-robot::before { content: "🤖"; }
+    .icon-play::before { content: "▶️"; }
+    .icon-list::before { content: "📋"; }
+    .icon-question::before { content: "❓"; }
+    .icon-times::before { content: "❌"; }
+    .icon-edit::before { content: "✏️"; }
+    .icon-sync::before { content: "🔄"; }
+    .icon-puzzle::before { content: "🧩"; }
+    
+    body { background: #181c20; color: #e0e0e0; font-family: ui-sans-serif, system-ui, sans-serif; margin: 0; padding: 0; }
+    .header { background: #24282f; border-bottom: 1px solid #3c424d; display: flex; align-items: center; height: 64px; padding: 0 24px; }
+    .header .logo { display: flex; align-items: center; margin-right: 32px; }
+    .header .logo span { font-size: 16px; font-weight: 500; margin-left: 8px; }
+    .header .toolbar { display: flex; align-items: center; margin-right: 32px; }
+    .header .toolbar button { background: #3c424d; color: #e0e0e0; border: none; border-radius: 4px; margin-right: 16px; padding: 6px 12px; font-size: 12px; display: flex; align-items: center; cursor: pointer; transition: background 0.2s; }
+    .header .toolbar button:hover { background: #505664; }
+    .header .run-btn { background: #89b4fa; color: #181d21; font-weight: 500; font-size: 14px; padding: 6px 18px; border-radius: 4px; margin-right: 24px; display: flex; align-items: center; border: none; cursor: pointer; }
+    .header .right { margin-left: auto; display: flex; align-items: center; }
+    .header .right button { background: transparent; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-right: 8px; cursor: pointer; }
+    .main { display: flex; width: 100vw; min-height: calc(100vh - 64px); }
+    .left-panel { width: 400px; background: #1a1d21; display: flex; flex-direction: column; border-right: 1px solid #3c424d; }
+    .editor-panel { flex: 1; display: flex; flex-direction: column; background: #1a1d21; }
+    .side-panel { width: 480px; background: #1a1d21; display: flex; flex-direction: column; }
+    .problem-tabs, .console-tabs { background: #24282f; border-bottom: 1px solid #3c424d; height: 40px; display: flex; align-items: center; padding: 0 16px; }
+    .problem-tabs button, .console-tabs button { background: none; border: none; color: #89b4fa; font-size: 14px; font-weight: 500; padding: 8px 16px; border-bottom: 2px solid #89b4fa; cursor: pointer; }
+    .problem-content, .console-content { flex: 1; background: #24282f; overflow-y: auto; padding: 16px; }
+    .editor-title { background: #24282f; border-bottom: 1px solid #3c424d; height: 40px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; }
+    .editor-area { flex: 1; background: #1a1d21; color: #e0e0e0; border: none; padding: 16px; font-family: 'Consolas', 'Monaco', monospace; font-size: 14px; resize: none; outline: none; }
+    .test-message { text-align: center; padding: 40px; color: #89b4fa; }
+    .test-message h2 { margin-bottom: 16px; }
+    .test-message p { margin-bottom: 8px; color: #a8b2bf; }
+    .success { color: #3ecf8e; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <button onclick="goHome()" style="background: none; border: none; color: #e0e0e0; cursor: pointer; margin-right: 16px; padding: 4px 8px; border-radius: 4px;">
+        <span class="icon-home"></span>
+      </button>
+      <span class="icon-puzzle"></span><span>WSS IDE (Problem Style - Offline)</span>
+    </div>
+    <div class="toolbar">
+      <button><span class="icon-plus"></span>新建</button>
+      <button><span class="icon-folder"></span>打开</button>
+      <button><span class="icon-save"></span>保存</button>
+      <button onclick="window.location.href='../ide/index.html'"><span class="icon-robot"></span>切换到 AI Only</button>
+    </div>
+    <button class="run-btn"><span class="icon-play"></span>运行</button>
+    <div class="right">
+      <button title="切换题目栏"><span class="icon-list"></span></button>
+      <button title="切换AI助手"><span class="icon-robot"></span></button>
+      <button title="帮助"><span class="icon-question"></span></button>
+    </div>
+  </header>
+  <div class="main">
+    <div class="left-panel">
+      <div class="problem-tabs">
+        <button>题目</button>
+      </div>
+      <div class="problem-content">
+        <div class="test-message">
+          <h2 class="success">✅ 离线版本测试</h2>
+          <p>如果你能看到这个页面，说明基本的 HTML/CSS 加载正常</p>
+          <p>这是一个不依赖外部资源的简化版本</p>
+          <p>用于测试 Electron 打包后的基本功能</p>
+        </div>
+      </div>
+    </div>
+    <div class="editor-panel">
+      <div class="editor-title">solution.cpp</div>
+      <textarea class="editor-area" placeholder="// 在这里编写你的代码
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << \"Hello, World!\" << endl;
+    return 0;
+}"></textarea>
+    </div>
+    <div class="side-panel">
+      <div class="console-tabs">
+        <button>控制台</button>
+      </div>
+      <div class="console-content">
+        <div class="test-message">
+          <h2>🔧 调试信息</h2>
+          <p>协议: <span id="protocol"></span></p>
+          <p>路径: <span id="pathname"></span></p>
+          <p>用户代理: <span id="userAgent"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function goHome() {
+      window.location.href = '../index.html';
+    }
+    
+    // 显示调试信息
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('protocol').textContent = window.location.protocol;
+      document.getElementById('pathname').textContent = window.location.pathname;
+      document.getElementById('userAgent').textContent = navigator.userAgent;
+      
+      console.log('ProBIDE Offline: 页面加载完成');
+      console.log('协议:', window.location.protocol);
+      console.log('路径:', window.location.pathname);
+    });
+  </script>
+</body>
+</html>

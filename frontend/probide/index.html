@@ -1,118 +1,687 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:; style-src 'self' 'unsafe-inline' https: http:; img-src 'self' data: https: http:; font-src 'self' data: https: http:; connect-src 'self' https: http: ws: wss:;">
   <title>WSS IDE - Problem Style.</title>
   <link rel="stylesheet" href="https://static.paraflowcontent.com/public/css/font-awesome/font-awesome.672.css">
   <link rel="stylesheet" href="./styles.css">
   <!-- 你猜为什么有这行注释，因为我他妈账户系统后端写爆了，那行我不写了，我直接删了，又不是不能用 =) -->
   <style>
-    body { background: #181c20; color: #e0e0e0; font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; margin: 0; padding: 0; }
-    .header { background: #24282f; border-bottom: 1px solid #3c424d; display: flex; align-items: center; height: 64px; padding: 0 24px; }
-    .header .logo { display: flex; align-items: center; margin-right: 32px; }
-    .header .logo i { color: #f0f4f8; font-size: 24px; margin-right: 8px; }
-    .header .logo span { font-size: 16px; font-weight: 500; }
-    .header .toolbar { display: flex; align-items: center; margin-right: 32px; }
-    .header .toolbar button { background: #3c424d; color: #e0e0e0; border: none; border-radius: 4px; margin-right: 16px; padding: 6px 12px; font-size: 12px; display: flex; align-items: center; cursor: pointer; transition: background 0.2s; }
-    .header .toolbar button:last-child { margin-right: 0; }
-    .header .toolbar button:hover { background: #505664; }
-    .header .toolbar i { margin-right: 8px; }
-    .header .run-btn { background: #89b4fa; color: #181d21; font-weight: 500; font-size: 14px; padding: 6px 18px; border-radius: 4px; margin-right: 24px; display: flex; align-items: center; border: none; cursor: pointer; transition: background 0.2s; }
-    .header .run-btn:hover { background: #a6c8ff; }
-    .header .right { margin-left: auto; display: flex; align-items: center; }
-    .header .right button { background: transparent; border: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-right: 8px; cursor: pointer; }
-    .header .right button:last-child { margin-right: 0; }
-    .header .right i { color: #a8b2bf; font-size: 20px; }
-    .main { display: flex; width: 100vw; min-height: calc(100vh - 64px); height: calc(100vh - 64px); box-sizing: border-box; }
-    .left-panel { width: 400px; min-width: 320px; max-width: 40vw; background: #1a1d21; display: flex; flex-direction: column; position: relative; transition: width 0.3s ease, transform 0.3s ease; border-right: 1px solid #3c424d; }
-    .left-panel.left-hidden { transform: translateX(-100%); }
-    .left-sidebar-resizer { position: absolute; right: 0; top: 0; width: 4px; height: 100%; cursor: ew-resize; background: transparent; z-index: 10; }
-    .left-sidebar-resizer:hover { background: #89b4fa; }
-    .left-sidebar-resizer.resizing { background: #89b4fa; }
-    .editor-panel { flex: 1 1 0; display: flex; flex-direction: column; background: #1a1d21; min-width: 300px; }
-    .editor-title { background: #24282f; border-bottom: 1px solid #3c424d; height: 40px; display: flex; align-items: center; padding: 0 16px; font-size: 14px; }
-    #editor { flex: 1 1 0; min-height: 0; min-width: 0; width: 100%; height: 100%; }
-    .side-panel { width: 480px; min-width: 320px; max-width: 40vw; background: #1a1d21; display: flex; flex-direction: column; position: relative; transition: width 0.3s ease, transform 0.3s ease; }
-    .side-panel.right-hidden { transform: translateX(100%); }
+    body {
+      background: #181c20;
+      color: #e0e0e0;
+      font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+      margin: 0;
+      padding: 0;
+    }
 
-    .sidebar-resizer { position: absolute; left: 0; top: 0; width: 4px; height: 100%; cursor: ew-resize; background: transparent; z-index: 10; }
-    .sidebar-resizer:hover { background: #89b4fa; }
-    .sidebar-resizer.resizing { background: #89b4fa; }
+    .header {
+      background: #24282f;
+      border-bottom: 1px solid #3c424d;
+      display: flex;
+      align-items: center;
+      height: 64px;
+      padding: 0 24px;
+    }
 
-    .console-tabs { background: #24282f; border-bottom: 1px solid #3c424d; height: 40px; display: flex; align-items: center; padding: 0 16px; position: relative; }
-    .console-tabs button { background: none; border: none; color: #89b4fa; font-size: 14px; font-weight: 500; padding: 8px 16px; border-bottom: 2px solid #89b4fa; cursor: pointer; }
-    .console-tabs .sidebar-controls { position: absolute; right: 8px; display: flex; gap: 4px; }
-    .console-tabs .sidebar-controls button { background: transparent; border: none; color: #a8b2bf; padding: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 2px; }
-    .console-tabs .sidebar-controls button:hover { background: #3c424d; color: #e0e0e0; }
-    .console-content { flex: 1 1 0; background: #24282f; overflow-y: auto; padding: 16px; min-width: 0; }
-    .console-section { margin-bottom: 24px; }
-    .console-section-title { color: #89b4fa; font-size: 12px; margin-bottom: 8px; }
-    .console-section-content { background: #3c424d; color: #e0e0e0; border-radius: 4px; padding: 12px; font-size: 13px; }
-    .console-section-content.success { color: #3ecf8e; }
-    .console-section-content.error { color: #ff6b6b; }
-    .console-section-content .output-highlight { color: #3ecf8e; }
-    .hidden { display: none !important; }
-    
+    .header .logo {
+      display: flex;
+      align-items: center;
+      margin-right: 32px;
+    }
+
+    .header .logo i {
+      color: #f0f4f8;
+      font-size: 24px;
+      margin-right: 8px;
+    }
+
+    .header .logo span {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .header .toolbar {
+      display: flex;
+      align-items: center;
+      margin-right: 32px;
+    }
+
+    .header .toolbar button {
+      background: #3c424d;
+      color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      margin-right: 16px;
+      padding: 6px 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .header .toolbar button:last-child {
+      margin-right: 0;
+    }
+
+    .header .toolbar button:hover {
+      background: #505664;
+    }
+
+    .header .toolbar i {
+      margin-right: 8px;
+    }
+
+    .header .run-btn {
+      background: #89b4fa;
+      color: #181d21;
+      font-weight: 500;
+      font-size: 14px;
+      padding: 6px 18px;
+      border-radius: 4px;
+      margin-right: 24px;
+      display: flex;
+      align-items: center;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .header .run-btn:hover {
+      background: #a6c8ff;
+    }
+
+    .header .right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .header .right button {
+      background: transparent;
+      border: none;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      cursor: pointer;
+    }
+
+    .header .right button:last-child {
+      margin-right: 0;
+    }
+
+    .header .right i {
+      color: #a8b2bf;
+      font-size: 20px;
+    }
+
+    .main {
+      display: flex;
+      width: 100vw;
+      min-height: calc(100vh - 64px);
+      height: calc(100vh - 64px);
+      box-sizing: border-box;
+    }
+
+    .left-panel {
+      width: 400px;
+      min-width: 320px;
+      max-width: 40vw;
+      background: #1a1d21;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: width 0.3s ease, transform 0.3s ease;
+      border-right: 1px solid #3c424d;
+    }
+
+    .left-panel.left-hidden {
+      transform: translateX(-100%);
+    }
+
+    .left-sidebar-resizer {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      cursor: ew-resize;
+      background: transparent;
+      z-index: 10;
+    }
+
+    .left-sidebar-resizer:hover {
+      background: #89b4fa;
+    }
+
+    .left-sidebar-resizer.resizing {
+      background: #89b4fa;
+    }
+
+    .editor-panel {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      background: #1a1d21;
+      min-width: 300px;
+    }
+
+    .editor-title {
+      background: #24282f;
+      border-bottom: 1px solid #3c424d;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 14px;
+    }
+
+    #editor {
+      flex: 1 1 0;
+      min-height: 0;
+      min-width: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .side-panel {
+      width: 480px;
+      min-width: 320px;
+      max-width: 40vw;
+      background: #1a1d21;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: width 0.3s ease, transform 0.3s ease;
+    }
+
+    .side-panel.right-hidden {
+      transform: translateX(100%);
+    }
+
+    .sidebar-resizer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      cursor: ew-resize;
+      background: transparent;
+      z-index: 10;
+    }
+
+    .sidebar-resizer:hover {
+      background: #89b4fa;
+    }
+
+    .sidebar-resizer.resizing {
+      background: #89b4fa;
+    }
+
+    .console-tabs {
+      background: #24282f;
+      border-bottom: 1px solid #3c424d;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      position: relative;
+    }
+
+    .console-tabs button {
+      background: none;
+      border: none;
+      color: #89b4fa;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-bottom: 2px solid #89b4fa;
+      cursor: pointer;
+    }
+
+    .console-tabs .sidebar-controls {
+      position: absolute;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .console-tabs .sidebar-controls button {
+      background: transparent;
+      border: none;
+      color: #a8b2bf;
+      padding: 4px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+
+    .console-tabs .sidebar-controls button:hover {
+      background: #3c424d;
+      color: #e0e0e0;
+    }
+
+    .console-content {
+      flex: 1 1 0;
+      background: #24282f;
+      overflow-y: auto;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .console-section {
+      margin-bottom: 24px;
+    }
+
+    .console-section-title {
+      color: #89b4fa;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .console-section-content {
+      background: #3c424d;
+      color: #e0e0e0;
+      border-radius: 4px;
+      padding: 12px;
+      font-size: 13px;
+    }
+
+    .console-section-content.success {
+      color: #3ecf8e;
+    }
+
+    .console-section-content.error {
+      color: #ff6b6b;
+    }
+
+    .console-section-content .output-highlight {
+      color: #3ecf8e;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
     /* 左侧栏题目相关样式 */
-    .problem-tabs { background: #24282f; border-bottom: 1px solid #3c424d; height: 40px; display: flex; align-items: center; padding: 0 16px; position: relative; }
-    .problem-tabs button { background: none; border: none; color: #89b4fa; font-size: 14px; font-weight: 500; padding: 8px 16px; border-bottom: 2px solid #89b4fa; cursor: pointer; }
-    .problem-content { flex: 1 1 0; background: #24282f; overflow-y: auto; padding: 16px; min-width: 0; }
-    
+    .problem-tabs {
+      background: #24282f;
+      border-bottom: 1px solid #3c424d;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      position: relative;
+    }
+
+    .problem-tabs button {
+      background: none;
+      border: none;
+      color: #89b4fa;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-bottom: 2px solid #89b4fa;
+      cursor: pointer;
+    }
+
+    .problem-content {
+      flex: 1 1 0;
+      background: #24282f;
+      overflow-y: auto;
+      padding: 16px;
+      min-width: 0;
+    }
+
     /* 题目输入界面 */
-    .problem-input { display: flex; flex-direction: column; gap: 16px; }
-    .problem-input h3 { color: #89b4fa; margin: 0 0 8px 0; font-size: 16px; }
-    .problem-input p { color: #a8b2bf; margin: 0 0 16px 0; font-size: 14px; line-height: 1.5; }
-    .problem-input textarea { background: #3c424d; color: #e0e0e0; border: 1px solid #505664; border-radius: 4px; padding: 12px; font-size: 14px; resize: vertical; min-height: 200px; font-family: inherit; }
-    .problem-input textarea:focus { outline: none; border-color: #89b4fa; }
-    .input-actions { display: flex; gap: 8px; }
-    .input-actions button { background: #89b4fa; color: #181d21; border: none; border-radius: 4px; padding: 8px 16px; font-size: 14px; font-weight: 500; cursor: pointer; }
-    .input-actions button:hover { background: #a6c8ff; }
-    .input-actions button.secondary { background: #3c424d; color: #e0e0e0; }
-    .input-actions button.secondary:hover { background: #505664; }
-    
+    .problem-input {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .problem-input h3 {
+      color: #89b4fa;
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .problem-input p {
+      color: #a8b2bf;
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .problem-input textarea {
+      background: #3c424d;
+      color: #e0e0e0;
+      border: 1px solid #505664;
+      border-radius: 4px;
+      padding: 12px;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 200px;
+      font-family: inherit;
+    }
+
+    .problem-input textarea:focus {
+      outline: none;
+      border-color: #89b4fa;
+    }
+
+    .input-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .input-actions button {
+      background: #89b4fa;
+      color: #181d21;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .input-actions button:hover {
+      background: #a6c8ff;
+    }
+
+    .input-actions button.secondary {
+      background: #3c424d;
+      color: #e0e0e0;
+    }
+
+    .input-actions button.secondary:hover {
+      background: #505664;
+    }
+
     /* 题目显示界面 */
-    .problem-display { color: #e0e0e0; font-size: 14px; line-height: 1.6; }
-    .problem-display h1, .problem-display h2, .problem-display h3 { color: #89b4fa; margin-top: 24px; margin-bottom: 12px; }
-    .problem-display h1:first-child, .problem-display h2:first-child, .problem-display h3:first-child { margin-top: 0; }
-    .problem-display code { background: #3c424d; color: #f0f4f8; padding: 2px 6px; border-radius: 3px; font-family: 'Consolas', 'Monaco', monospace; }
-    .problem-display pre { background: #3c424d; color: #f0f4f8; padding: 12px; border-radius: 6px; overflow-x: auto; font-family: 'Consolas', 'Monaco', monospace; }
-    .problem-display blockquote { border-left: 3px solid #89b4fa; padding-left: 12px; margin: 16px 0; color: #a8b2bf; }
-    .problem-display ul, .problem-display ol { padding-left: 20px; }
-    .problem-display li { margin-bottom: 4px; }
-    .problem-actions { display: flex; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #3c424d; }
-    .problem-actions button { background: #3c424d; color: #e0e0e0; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
-    .problem-actions button:hover { background: #505664; }
-    .problem-actions button.primary { background: #89b4fa; color: #181d21; }
-    .problem-actions button.primary:hover { background: #a6c8ff; }
-    
+    .problem-display {
+      color: #e0e0e0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .problem-display h1,
+    .problem-display h2,
+    .problem-display h3 {
+      color: #89b4fa;
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    .problem-display h1:first-child,
+    .problem-display h2:first-child,
+    .problem-display h3:first-child {
+      margin-top: 0;
+    }
+
+    .problem-display code {
+      background: #3c424d;
+      color: #f0f4f8;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .problem-display pre {
+      background: #3c424d;
+      color: #f0f4f8;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .problem-display blockquote {
+      border-left: 3px solid #89b4fa;
+      padding-left: 12px;
+      margin: 16px 0;
+      color: #a8b2bf;
+    }
+
+    .problem-display ul,
+    .problem-display ol {
+      padding-left: 20px;
+    }
+
+    .problem-display li {
+      margin-bottom: 4px;
+    }
+
+    .problem-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #3c424d;
+    }
+
+    .problem-actions button {
+      background: #3c424d;
+      color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .problem-actions button:hover {
+      background: #505664;
+    }
+
+    .problem-actions button.primary {
+      background: #89b4fa;
+      color: #181d21;
+    }
+
+    .problem-actions button.primary:hover {
+      background: #a6c8ff;
+    }
+
     /* AI Agent 样式 */
-    .ai-message { margin-bottom: 16px; padding: 12px; background: #24282f; border-radius: 8px; }
-    .ai-message.user { border-left: 3px solid #89b4fa; }
-    .ai-message.assistant { border-left: 3px solid #3ecf8e; }
-    .ai-message.system { border-left: 3px solid #ff6b6b; }
-    .ai-message-role { color: #89b4fa; font-size: 12px; font-weight: 500; margin-bottom: 4px; }
-    .ai-message-content { color: #e0e0e0; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
-    .ai-input-container { display: flex; gap: 8px; }
-    .ai-input { flex: 1; background: #3c424d; color: #e0e0e0; border: 1px solid #505664; border-radius: 4px; padding: 8px; font-size: 14px; resize: vertical; min-height: 36px; max-height: 120px; font-family: inherit; }
-    .ai-send-btn { background: #89b4fa; color: #181d21; border: none; border-radius: 4px; padding: 8px 16px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
-    .ai-send-btn:hover { background: #a6c8ff; }
-    .ai-send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .ai-toolbar { display: flex; gap: 8px; margin-bottom: 8px; }
-    .ai-toolbar button { background: #3c424d; color: #e0e0e0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; }
-    .ai-toolbar button:hover { background: #505664; }
-    
+    .ai-message {
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #24282f;
+      border-radius: 8px;
+    }
+
+    .ai-message.user {
+      border-left: 3px solid #89b4fa;
+    }
+
+    .ai-message.assistant {
+      border-left: 3px solid #3ecf8e;
+    }
+
+    .ai-message.system {
+      border-left: 3px solid #ff6b6b;
+    }
+
+    .ai-message-role {
+      color: #89b4fa;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .ai-message-content {
+      color: #e0e0e0;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .ai-input-container {
+      display: flex;
+      gap: 8px;
+    }
+
+    .ai-input {
+      flex: 1;
+      background: #3c424d;
+      color: #e0e0e0;
+      border: 1px solid #505664;
+      border-radius: 4px;
+      padding: 8px;
+      font-size: 14px;
+      resize: vertical;
+      min-height: 36px;
+      max-height: 120px;
+      font-family: inherit;
+    }
+
+    .ai-send-btn {
+      background: #89b4fa;
+      color: #181d21;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .ai-send-btn:hover {
+      background: #a6c8ff;
+    }
+
+    .ai-send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .ai-toolbar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .ai-toolbar button {
+      background: #3c424d;
+      color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .ai-toolbar button:hover {
+      background: #505664;
+    }
+
     /* 思考过程样式 */
-    .thinking-container { margin: 8px 0; border: 1px solid #3c424d; border-radius: 6px; background: #1a1d21; }
-    .thinking-header { padding: 8px 12px; background: #2a2d35; border-radius: 6px 6px 0 0; cursor: pointer; display: flex; align-items: center; font-size: 12px; color: #a8b2bf; user-select: none; transition: background 0.2s; }
-    .thinking-header:hover { background: #3a3d45; }
-    .thinking-content { padding: 12px; font-size: 13px; color: #c9d1d9; background: #1a1d21; border-radius: 0 0 6px 6px; white-space: pre-wrap; word-wrap: break-word; line-height: 1.4; font-family: 'Consolas', 'Monaco', monospace; }
-    .thinking-icon { margin-right: 6px; transition: transform 0.2s; display: inline-block; }
-    .modal-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-    .modal { background: #23272e; color: #e0e0e0; border-radius: 8px; padding: 32px 40px; min-width: 320px; max-width: 90vw; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-    .modal-content { font-size: 14px; margin-bottom: 24px; }
-    .modal-close { background: #89b4fa; color: #181d21; border: none; border-radius: 4px; padding: 6px 18px; font-size: 14px; font-weight: 500; cursor: pointer; float: right; }
-    input[type="file"] { display: none; }
+    .thinking-container {
+      margin: 8px 0;
+      border: 1px solid #3c424d;
+      border-radius: 6px;
+      background: #1a1d21;
+    }
+
+    .thinking-header {
+      padding: 8px 12px;
+      background: #2a2d35;
+      border-radius: 6px 6px 0 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      color: #a8b2bf;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .thinking-header:hover {
+      background: #3a3d45;
+    }
+
+    .thinking-content {
+      padding: 12px;
+      font-size: 13px;
+      color: #c9d1d9;
+      background: #1a1d21;
+      border-radius: 0 0 6px 6px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      line-height: 1.4;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .thinking-icon {
+      margin-right: 6px;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal {
+      background: #23272e;
+      color: #e0e0e0;
+      border-radius: 8px;
+      padding: 32px 40px;
+      min-width: 320px;
+      max-width: 90vw;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .modal-content {
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .modal-close {
+      background: #89b4fa;
+      color: #181d21;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      float: right;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
   <!-- MathJax 配置和加载 -->
@@ -134,19 +703,24 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
+
 <body>
   <header class="header">
     <div class="logo">
-      <button onclick="goHome()" style="background: none; border: none; color: #e0e0e0; cursor: pointer; margin-right: 16px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;" onmouseover="this.style.background='#3c424d'" onmouseout="this.style.background='none'">
+      <button onclick="goHome()"
+        style="background: none; border: none; color: #e0e0e0; cursor: pointer; margin-right: 16px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;"
+        onmouseover="this.style.background='#3c424d'" onmouseout="this.style.background='none'">
         <i class="fas fa-home"></i>
       </button>
       <i class="fas fa-puzzle-piece"></i><span>WSS IDE (Problem Style)</span>
     </div>
     <div class="toolbar">
       <button id="newBtn"><i class="fas fa-plus"></i>新建</button>
-      <button id="openBtn"><i class="fas fa-folder-open"></i>打开<input type="file" id="openFileInput" accept=".cpp,.txt,.h,.hpp,.c" /></button>
+      <button id="openBtn"><i class="fas fa-folder-open"></i>打开<input type="file" id="openFileInput"
+          accept=".cpp,.txt,.h,.hpp,.c" /></button>
       <button id="saveBtn"><i class="fas fa-save"></i>保存</button>
-      <button onclick="window.location.href='../ide/index.html'" title="切换到 AI Only"><i class="fas fa-robot"></i>切换到 AI Only</button>
+      <button onclick="window.location.href='../ide/index.html'" title="切换到 AI Only"><i class="fas fa-robot"></i>切换到 AI
+        Only</button>
     </div>
     <button class="run-btn" id="runBtn"><i class="fas fa-play"></i>运行</button>
     <div class="right">
@@ -204,15 +778,30 @@
     </div>
   </div>
   <script>
+    // 调试信息
+    console.log('ProBIDE: 页面开始加载');
+    console.log('ProBIDE: 当前协议:', window.location.protocol);
+    console.log('ProBIDE: 当前路径:', window.location.href);
+
+    // 错误处理
+    window.addEventListener('error', function (e) {
+      console.error('ProBIDE: 全局错误:', e.error);
+      console.error('ProBIDE: 错误源:', e.filename, '行:', e.lineno);
+    });
+
+    window.addEventListener('unhandledrejection', function (e) {
+      console.error('ProBIDE: 未处理的 Promise 拒绝:', e.reason);
+    });
+
     function goHome() {
       window.location.href = '../index.html';
     }
-    
+
     // Markdown && LaTeX Rendering
     function renderMarkdown(markdown) {
       // pass think-s.
       const filteredMarkdown = filterThinkingProcess(markdown);
-      
+
       const rendered = filteredMarkdown
         .replace(/^# (.*$)/gm, '<h1>$1</h1>')
         .replace(/^## (.*$)/gm, '<h2>$1</h2>')
@@ -224,16 +813,16 @@
         .replace(/^\* (.*$)/gm, '<li>$1</li>')
         .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
         .replace(/\n/g, '<br>');
-      
+
       return rendered;
     }
-    
+
     // FUCK YOU DEEPSEEK R1
     // FUCK MYSELF WHY U DIDNT JUST WRITE A MODEL-SWITCH WHILE YOU'RE DOING BACKEND
     function filterThinkingProcess(content) {
       return content.replace(/<think>[\s\S]*?<\/think>/gi, '');
     }
-    
+
     // RENDER THE FXXKING MATHJAX
     function renderMathJax(element) {
       if (window.MathJax && window.MathJax.typesetPromise) {
@@ -242,7 +831,7 @@
         });
       }
     }
-    
+
     // convert Problem -> Markdown
     async function convertProblemToMarkdown(content) {
       try {
@@ -250,11 +839,11 @@
         if (isMarkdownFormat(content)) {
           return content;
         }
-        
+
         // API
         const apiBase = window.IDE_CONFIG ? window.IDE_CONFIG.getApiConfig().AI_AGENT : 'https://api.ide.whyss.tech/api/ai';
         const sessionId = 'probide_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        
+
         const healthResponse = await fetch(`${apiBase}/health`, {
           method: 'GET',
           headers: {
@@ -262,11 +851,11 @@
           },
           mode: 'cors'
         });
-        
+
         if (!healthResponse.ok) {
           throw new Error('AI 服务暂时不可用，请稍后重试');
         }
-        
+
         const response = await fetch(`${apiBase}/chat`, {
           method: 'POST',
           headers: {
@@ -278,25 +867,25 @@
           }),
           mode: 'cors'
         });
-        
+
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`服务器错误 (${response.status}): ${errorText}`);
         }
-        
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
         let fullContent = '';
-        
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          
+
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
           buffer = lines.pop(); // 保留不完整的行
-          
+
           for (const line of lines) {
             if (line.startsWith('data: ')) {
               try {
@@ -314,16 +903,16 @@
             }
           }
         }
-        
+
         return fullContent || content;
-        
+
       } catch (error) {
         console.error('AI Converting failure!:', error);
         // return the original lol
         return content;
       }
     }
-    
+
     // 。
     function isMarkdownFormat(content) {
       const markdownIndicators = [
@@ -339,7 +928,7 @@
       //我无敌了
       return markdownIndicators.some(pattern => pattern.test(content));
     }
-    
+
     // 显示题目输入界面
     function showProblemInput() {
       const problemContent = document.getElementById('problemContent');
@@ -368,7 +957,7 @@
           </div>
         </div>
       `;
-      
+
       // 绑定事件
       document.getElementById('processProblemBtn').addEventListener('click', () => {
         processProblem();
@@ -380,13 +969,13 @@
         }
       });
     }
-    
+
     // 清空题目内容
     function clearProblem() {
       document.getElementById('problemTextarea').value = '';
       document.getElementById('problemTextarea').focus();
     }
-    
+
     // 显示题目内容
     function showProblemDisplay(markdownContent) {
       const problemContent = document.getElementById('problemContent');
@@ -407,7 +996,7 @@
           </div>
         </div>
       `;
-      
+
       // 绑定事件
       document.getElementById('editProblemBtn').addEventListener('click', showProblemInput);
       document.getElementById('refreshProblemBtn').addEventListener('click', () => {
@@ -415,7 +1004,7 @@
           processProblem(window.currentProblemText);
         }
       });
-      
+
       // 渲染 LaTeX 数学公式
       const renderedElement = document.getElementById('problemRendered');
       if (renderedElement) {
@@ -425,40 +1014,40 @@
         }, 100);
       }
     }
-    
+
     // 处理题目内容
     async function processProblem(content = null) {
       const textarea = document.getElementById('problemTextarea');
       const problemText = content || textarea.value.trim();
-      
+
       if (!problemText) {
         alert('请输入题目内容');
         return;
       }
-      
+
       // 保存当前内容供重新处理使用
       window.currentProblemText = problemText;
-      
+
       try {
         // 显示处理中状态
         showProcessingState();
-        
+
         // 调用 AI 转换为 Markdown
         const markdownContent = await convertProblemToMarkdown(problemText);
-        
+
         // 渲染 Markdown 并显示
         const renderedContent = renderMarkdown(markdownContent);
         showProblemDisplay(renderedContent);
-        
+
         // 保存题目内容供 AI 上下文使用
         window.currentProblemMarkdown = markdownContent;
-        
+
       } catch (error) {
         console.error('处理题目失败:', error);
         showErrorState('处理题目失败，请重试');
       }
     }
-    
+
     // 显示处理中状态
     function showProcessingState() {
       const problemContent = document.getElementById('problemContent');
@@ -475,7 +1064,7 @@
         </style>
       `;
     }
-    
+
     // 显示错误状态
     function showErrorState(message) {
       const problemContent = document.getElementById('problemContent');
@@ -487,7 +1076,7 @@
         </div>
       `;
     }
-    
+
     // 双侧栏状态管理
     let sidebarState = {
       left: {
@@ -499,7 +1088,7 @@
         width: 480
       }
     };
-    
+
     // 从本地存储恢复侧栏状态
     function loadSidebarState() {
       const saved = localStorage.getItem('probide-sidebar-state');
@@ -512,16 +1101,16 @@
         }
       }
     }
-    
+
     // 保存侧栏状态到本地存储
     function saveSidebarState() {
       localStorage.setItem('probide-sidebar-state', JSON.stringify(sidebarState));
     }
-    
+
     // 应用左侧栏状态
     function applyLeftSidebarState() {
       const leftPanel = document.getElementById('leftPanel');
-      
+
       if (!sidebarState.left.visible) {
         leftPanel.classList.add('left-hidden');
       } else {
@@ -529,11 +1118,11 @@
         leftPanel.style.width = sidebarState.left.width + 'px';
       }
     }
-    
+
     // 应用右侧栏状态
     function applyRightSidebarState() {
       const rightPanel = document.getElementById('sidePanel');
-      
+
       if (!sidebarState.right.visible) {
         rightPanel.classList.add('right-hidden');
       } else {
@@ -541,41 +1130,41 @@
         rightPanel.style.width = sidebarState.right.width + 'px';
       }
     }
-    
+
     // 应用所有侧栏状态
     function applySidebarState() {
       applyLeftSidebarState();
       applyRightSidebarState();
     }
-    
+
     // 切换左侧栏显示/隐藏
     function toggleLeftSidebar() {
       sidebarState.left.visible = !sidebarState.left.visible;
       applyLeftSidebarState();
       saveSidebarState();
     }
-    
+
     // 切换右侧栏显示/隐藏
     function toggleRightSidebar() {
       sidebarState.right.visible = !sidebarState.right.visible;
       applyRightSidebarState();
       saveSidebarState();
     }
-    
+
     // 关闭左侧栏
     function closeLeftSidebar() {
       sidebarState.left.visible = false;
       applyLeftSidebarState();
       saveSidebarState();
     }
-    
+
     // 关闭右侧栏
     function closeRightSidebar() {
       sidebarState.right.visible = false;
       applyRightSidebarState();
       saveSidebarState();
     }
-    
+
     // 左侧栏拖拽调整宽度
     function initLeftSidebarResize() {
       const resizer = document.getElementById('leftSidebarResizer');
@@ -583,34 +1172,34 @@
       let isResizing = false;
       let startX = 0;
       let startWidth = 0;
-      
+
       resizer.addEventListener('mousedown', (e) => {
         if (!sidebarState.left.visible) return;
-        
+
         isResizing = true;
         startX = e.clientX;
         startWidth = parseInt(window.getComputedStyle(leftPanel).width, 10);
         resizer.classList.add('resizing');
         document.body.style.cursor = 'ew-resize';
         document.body.style.userSelect = 'none';
-        
+
         e.preventDefault();
       });
-      
+
       document.addEventListener('mousemove', (e) => {
         if (!isResizing) return;
-        
+
         const deltaX = e.clientX - startX;
         const newWidth = startWidth + deltaX;
         const minWidth = 320;
         const maxWidth = window.innerWidth * 0.4;
-        
+
         if (newWidth >= minWidth && newWidth <= maxWidth) {
           leftPanel.style.width = newWidth + 'px';
           sidebarState.left.width = newWidth;
         }
       });
-      
+
       document.addEventListener('mouseup', () => {
         if (isResizing) {
           isResizing = false;
@@ -621,7 +1210,7 @@
         }
       });
     }
-    
+
     // 右侧栏拖拽调整宽度
     function initRightSidebarResize() {
       const resizer = document.getElementById('sidebarResizer');
@@ -629,34 +1218,34 @@
       let isResizing = false;
       let startX = 0;
       let startWidth = 0;
-      
+
       resizer.addEventListener('mousedown', (e) => {
         if (!sidebarState.right.visible) return;
-        
+
         isResizing = true;
         startX = e.clientX;
         startWidth = parseInt(window.getComputedStyle(rightPanel).width, 10);
         resizer.classList.add('resizing');
         document.body.style.cursor = 'ew-resize';
         document.body.style.userSelect = 'none';
-        
+
         e.preventDefault();
       });
-      
+
       document.addEventListener('mousemove', (e) => {
         if (!isResizing) return;
-        
+
         const deltaX = startX - e.clientX;
         const newWidth = startWidth + deltaX;
         const minWidth = 320;
         const maxWidth = window.innerWidth * 0.4;
-        
+
         if (newWidth >= minWidth && newWidth <= maxWidth) {
           rightPanel.style.width = newWidth + 'px';
           sidebarState.right.width = newWidth;
         }
       });
-      
+
       document.addEventListener('mouseup', () => {
         if (isResizing) {
           isResizing = false;
@@ -667,7 +1256,7 @@
         }
       });
     }
-    
+
     // 键盘快捷键
     function initKeyboardShortcuts() {
       document.addEventListener('keydown', (e) => {
@@ -683,7 +1272,7 @@
         }
       });
     }
-    
+
     // 响应式调整
     function initResponsiveResize() {
       window.addEventListener('resize', () => {
@@ -691,25 +1280,50 @@
         const rightPanel = document.getElementById('sidePanel');
         const leftMaxWidth = window.innerWidth * 0.4;
         const rightMaxWidth = window.innerWidth * 0.4;
-        
+
         if (sidebarState.left.width > leftMaxWidth) {
           sidebarState.left.width = leftMaxWidth;
           leftPanel.style.width = leftMaxWidth + 'px';
         }
-        
+
         if (sidebarState.right.width > rightMaxWidth) {
           sidebarState.right.width = rightMaxWidth;
           rightPanel.style.width = rightMaxWidth + 'px';
         }
-        
+
         saveSidebarState();
       });
     }
-    
+
+    // 检查外部资源加载状态
+    function checkExternalResources() {
+      console.log('ProBIDE: 检查外部资源...');
+
+      // 检查 Font Awesome
+      const faTest = document.createElement('i');
+      faTest.className = 'fas fa-home';
+      faTest.style.display = 'none';
+      document.body.appendChild(faTest);
+      const faLoaded = window.getComputedStyle(faTest, ':before').content !== 'none';
+      console.log('ProBIDE: Font Awesome 加载状态:', faLoaded ? '✅' : '❌');
+      document.body.removeChild(faTest);
+
+      // 检查 Monaco Editor
+      const monacoLoaded = typeof window.require !== 'undefined';
+      console.log('ProBIDE: Monaco Editor 加载状态:', monacoLoaded ? '✅' : '❌');
+
+      // 检查 MathJax
+      const mathjaxLoaded = typeof window.MathJax !== 'undefined';
+      console.log('ProBIDE: MathJax 加载状态:', mathjaxLoaded ? '✅' : '❌');
+    }
+
     // Init
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       console.log('ProBIDE: DOM loaded, initializing...');
-      
+
+      // 延迟检查外部资源
+      setTimeout(checkExternalResources, 2000);
+
       // Sidebars
       loadSidebarState();
       applySidebarState();
@@ -717,30 +1331,30 @@
       initRightSidebarResize();
       initKeyboardShortcuts();
       initResponsiveResize();
-      
+
       // btn
       document.getElementById('toggleLeftSidebarBtn').addEventListener('click', toggleLeftSidebar);
       document.getElementById('toggleRightSidebarBtn').addEventListener('click', toggleRightSidebar);
       document.getElementById('closeLeftSidebarBtn').addEventListener('click', closeLeftSidebar);
       document.getElementById('closeRightSidebarBtn').addEventListener('click', closeRightSidebar);
-      
+
       // 显示题目输入界面
       showProblemInput();
-      
+
       // 添加状态指示
       const statusDiv = document.createElement('div');
       statusDiv.style.cssText = 'margin-left: auto; margin-right: 16px; font-size: 14px; color: #a8b2bf; display: flex; align-items: center;';
       statusDiv.innerHTML = '<span>🧩 Problem Style 就绪</span>';
-      
+
       const headerRight = document.querySelector('.header .right');
       headerRight.insertBefore(statusDiv, headerRight.firstChild);
-      
+
       // 重写 AI 助手的 sendMessage 方法以包含题目上下文
       setTimeout(() => {
         if (window.aiAgent) {
           const originalSendMessage = window.aiAgent.sendMessage.bind(window.aiAgent);
-          
-          window.aiAgent.sendMessage = async function() {
+
+          window.aiAgent.sendMessage = async function () {
             const input = document.getElementById('aiInput');
             const message = input.value.trim();
 
@@ -748,7 +1362,7 @@
 
             // 构建包含题目上下文的消息
             let contextualMessage = message;
-            
+
             // 如果有题目内容，添加到上下文中
             if (window.currentProblemMarkdown) {
               contextualMessage = `题目信息：\n${window.currentProblemMarkdown}\n\n用户问题：${message}`;
@@ -762,7 +1376,7 @@
           };
         }
       }, 1000);
-      
+
       console.log('ProBIDE: Initialization complete');
     });
   </script>
@@ -770,4 +1384,5 @@
   <script src="renderer.js"></script>
   <script src="ai-agent.js"></script>
 </body>
-</html> 
+
+</html>

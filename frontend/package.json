@@ -32,6 +32,7 @@
       "auth.js",
       "electron-auth.js",
       "ide/**/*",
+      "probide/**/*",
       "login/**/*",
       "register/**/*",
       "developer/**/*",

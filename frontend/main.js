@@ -71,6 +71,8 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       webSecurity: false, // 允许跨域请求到本地后端
+      allowRunningInsecureContent: true, // 允许在 HTTPS 页面中运行 HTTP 内容
+      experimentalFeatures: true, // 启用实验性功能
     },
     show: false, // 先不显示，等后端启动完成
   });
